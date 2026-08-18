@@ -15,7 +15,8 @@ Enterprises (FERG)**.
 | [`analysis/04-company-linkage.md`](analysis/04-company-linkage.md) | Sizing CNM and FERG against the addressable market, sensitivity to the funding cliff, and what to monitor |
 | [`analysis/05-sources-and-caveats.md`](analysis/05-sources-and-caveats.md) | Every source, its known bias, and where this analysis is uncertain |
 | [`analysis/06-asset-level-data-sources.md`](analysis/06-asset-level-data-sources.md) | Where pipe installation year and repair history actually exist in the public record — and where they don't |
-| [`US-Water-Infrastructure-Analysis.xlsx`](US-Water-Infrastructure-Analysis.xlsx) | 14-tab workbook: every figure with its source, plus a live formula-driven forward model you can re-run on your own assumptions |
+| [`US-Water-Infrastructure-Analysis.xlsx`](US-Water-Infrastructure-Analysis.xlsx) | 17-tab workbook: every figure with its source, a live formula-driven forward model, and **Annual** and **Quarterly** tabs holding the full downloaded company history plus 74 sourced macro series |
+| [`data/series.py`](data/series.py) | The raw data behind those tabs, as a plain Python module — every period carries its source URL |
 
 ## Published report
 
@@ -69,6 +70,12 @@ covers package registries, GitHub and Anthropic only. Public-sector figures ther
 search results summarising those primary documents; each is attributed to the correct source,
 but **verify headline numbers against the source document before relying on them**. Company
 financials came from Quartr's primary filings and do not carry this caveat.
+
+Retested since: still blocked. Only GitHub is reachable. Company financials **were** downloaded
+live, from Quartr's API, and carry per-period source URLs. The macro series on the `Annual` tab
+are compiled from published figures, each with a link and the exact retrieval route (FRED series
+ID, CRS table reference, EPA portal) so they can be refreshed automatically once network access
+allows.
 
 To lift this, the environment's network policy would need widening — see
 https://code.claude.com/docs/en/claude-code-on-the-web.

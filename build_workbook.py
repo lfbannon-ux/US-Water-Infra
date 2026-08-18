@@ -7,6 +7,9 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.comments import Comment
+import json, sys
+sys.path.insert(0, "data")
+import series as S
 
 # ---------------------------------------------------------------- style kit
 FONT = "Arial"
@@ -109,10 +112,10 @@ ws = sheet("Read Me", [46, 62, 46], "US Water Infrastructure — Analysis Workbo
            "Historical spending · forward budget model · technical drivers · Core & Main and Ferguson")
 r = 4
 r = section(ws, r, "What this workbook contains")
-r = note(ws, r, "A quantitative companion to the written analysis. Fifteen tabs covering who funds US water "
+r = note(ws, r, "A quantitative companion to the written analysis. Seventeen tabs covering who funds US water "
                 "infrastructure, what annual spend should look like through 2035, the engineering evidence for "
-                "replacement, where the underlying asset data actually lives, and how it all flows through to "
-                "the two listed distributors with direct exposure.")
+                "replacement, where the underlying asset data actually lives, the full downloaded time series, and "
+                "how it all flows through to the two listed distributors with direct exposure.")
 r += 1
 r = head(ws, r, ["Tab", "What it holds", "Formula-driven?"])
 for t, d, f in [
@@ -129,6 +132,8 @@ for t, d, f in [
     ("Ferguson", "Eight-year P&L, US customer groups, waterworks estimate", "Yes"),
     ("Comparison", "Side by side plus revenue sensitivity to market growth", "Yes"),
     ("Asset Data Sources", "Where pipe installation year and repair history exist in the public record", "No"),
+    ("Annual", "Full annual history for both companies plus 74 macro series with sources", "Partly"),
+    ("Quarterly", "Every reported quarter for both companies, with cross-foot checks", "Partly"),
     ("Sources", "Every source with its known interest or bias", "No"),
 ]:
     r = row(ws, r, [t, d, f])
@@ -1382,7 +1387,233 @@ r = note(ws, r, "VERIFICATION CAVEAT: none of these portals could be opened from
                 "dataset's actual schema, and how sparsely the installation-year field is populated, before "
                 "relying on it.")
 
-# ============================================================ 15. SOURCES
+# ============================================================ 15. ANNUAL
+LINKF = Font(name=FONT, size=9, color="0563C1", underline="single")
+
+def link(ws, r, c, url, text="report"):
+    cell = ws.cell(row=r, column=c, value=text)
+    cell.hyperlink = url
+    cell.font = LINKF
+    cell.border = BOX
+    cell.alignment = TOP
+
+ws = sheet("Annual", [40, 13, 13, 13, 13, 13, 13, 13, 13, 13, 40],
+           "Annual Data — As Far Back As Available",
+           "Company data downloaded from Quartr, one column per fiscal year. Macro data compiled with sources "
+           "and retrieval routes. $m unless stated.", tab="12724A")
+r = 4
+
+# ---- Core & Main annual
+r = section(ws, r, "Core & Main (CNM) — fiscal years ended the Sunday nearest 31 January")
+CA = S.CNM_ANNUAL
+r = head(ws, r, ["$m"] + [a[0] for a in CA] + [""] * (9 - len(CA)) + ["Source"])
+n = len(CA)
+def cols(i): return get_column_letter(2 + i)
+CA_END = r
+r = row(ws, r, ["Period end"] + [a[1] for a in CA] + [None] * (9 - n) + ["Quartr, standardised from primary filings"],
+        fonts=[BOLD] + [MUTED] * 9 + [MUTED])
+CA_REV = r
+r = row(ws, r, ["Net sales"] + [a[2] for a in CA] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + [F_NUM] * 9 + [None])
+for i, a in enumerate(CA):
+    link(ws, CA_REV, 11, a[8], "see period columns" if i == 0 else "")
+    break
+CA_GRW = r
+r = row(ws, r, ["  growth", None] + [f"={cols(i)}{CA_REV}/{cols(i-1)}{CA_REV}-1" for i in range(1, n)] + [None] * (9 - n) + ["Formula"],
+        fonts=[BLACK] + [BLACK] * 9 + [MUTED], fmts=[None] + [F_PCT] * 9 + [None])
+CA_GP = r
+r = row(ws, r, ["Gross profit"] + [a[3] for a in CA] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + [F_NUM] * 9 + [None])
+CA_GM = r
+r = row(ws, r, ["  gross margin"] + [f"={cols(i)}{CA_GP}/{cols(i)}{CA_REV}" for i in range(n)] + [None] * (9 - n) + ["Formula"],
+        fonts=[BLACK] + [BLACK] * 9 + [MUTED], fmts=[None] + [F_PCT] * 9 + [None])
+CA_EB = r
+r = row(ws, r, ["EBITDA (standardised)"] + [a[4] for a in CA] + [None] * (9 - n) +
+        ["Company-reported Adjusted EBITDA for FY2025 was $931m"],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [MUTED], fmts=[None] + [F_NUM] * 9 + [None])
+CA_EM = r
+r = row(ws, r, ["  EBITDA margin"] + [f"={cols(i)}{CA_EB}/{cols(i)}{CA_REV}" for i in range(n)] + [None] * (9 - n) + ["Formula"],
+        fonts=[BLACK] + [BLACK] * 9 + [MUTED], fmts=[None] + [F_PCT] * 9 + [None])
+r = row(ws, r, ["Operating income"] + [a[5] for a in CA] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + [F_NUM] * 9 + [None])
+r = row(ws, r, ["Net income"] + [a[6] for a in CA] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + [F_NUM] * 9 + [None])
+r = row(ws, r, ["Diluted EPS ($)"] + [a[7] for a in CA] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + ['$0.00'] * 9 + [None])
+CC = S.CNM_ANNUAL_CF
+CA_CFO = r
+r = row(ws, r, ["Cash from operations"] + [a[2] for a in CC] + [None] * (9 - n) + [None],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [BLACK], fmts=[None] + [F_NUM] * 9 + [None])
+CA_CAP = r
+r = row(ws, r, ["Capital expenditure (abs)"] + [a[3] for a in CC] + [None] * (9 - n) +
+        ["Sign convention varies in the vendor feed; absolute values used"],
+        fonts=[BOLD] + [BLUE_IN] * 9 + [MUTED], fmts=[None] + [F_NUM] * 9 + [None])
+CA_FCF = r
+r = row(ws, r, ["Free cash flow"] + [f"={cols(i)}{CA_CFO}-{cols(i)}{CA_CAP}" for i in range(n)] + [None] * (9 - n) +
+        ["Formula: CFO less capex. Computed rather than taken from the vendor FCF field"],
+        fonts=[BOLD] + [BOLD] * 9 + [MUTED], fmts=[None] + [F_NUM] * 9 + [None])
+r = row(ws, r, ["  FCF conversion of EBITDA"] + [f"=IF({cols(i)}{CA_EB}=0,0,{cols(i)}{CA_FCF}/{cols(i)}{CA_EB})" for i in range(n)] +
+        [None] * (9 - n) + ["Formula"],
+        fonts=[BLACK] + [BLACK] * 9 + [MUTED], fmts=[None] + [F_PCT] * 9 + [None])
+r = row(ws, r, ["Capex as % of sales"] + [f"={cols(i)}{CA_CAP}/{cols(i)}{CA_REV}" for i in range(n)] + [None] * (9 - n) +
+        ["Formula. Asset-light distribution model"],
+        fonts=[BLACK] + [BLACK] * 9 + [MUTED], fmts=[None] + [F_PCT] * 9 + [None])
+r += 1
+r = note(ws, r, "Quartr's coverage of Core & Main begins with the fiscal year ended 30 January 2022. The company "
+                "IPO'd in July 2021, so this is effectively the full listed history.")
+r += 1
+
+# ---- Ferguson annual
+r = section(ws, r, "Ferguson (FERG) — fiscal years ended 31 July through FY2025, then a 31 December year end")
+FA = S.FERG_ANNUAL
+m = len(FA)
+r = head(ws, r, ["$m"] + [a[0] for a in FA] + ["Source"])
+r = row(ws, r, ["Period end"] + [a[1] for a in FA] + ["Quartr, standardised from primary filings"],
+        fonts=[BOLD] + [MUTED] * m + [MUTED])
+FA_REV = r
+r = row(ws, r, ["Net sales"] + [a[2] for a in FA] + [None],
+        fonts=[BOLD] + [BLUE_IN] * m + [BLACK], fmts=[None] + [F_NUM] * m + [None])
+FA_GRW = r
+r = row(ws, r, ["  growth", None] + [f"={cols(i)}{FA_REV}/{cols(i-1)}{FA_REV}-1" for i in range(1, m)] +
+        ["Formula. CY2025 is a transition period — NOT comparable to the July years"],
+        fonts=[BLACK] + [BLACK] * m + [MUTED], fmts=[None] + [F_PCT] * m + [None])
+FA_GP = r
+r = row(ws, r, ["Gross profit"] + [a[3] for a in FA] + [None],
+        fonts=[BOLD] + [BLUE_IN] * m + [BLACK], fmts=[None] + [F_NUM] * m + [None])
+FA_GM = r
+r = row(ws, r, ["  gross margin"] + [f"={cols(i)}{FA_GP}/{cols(i)}{FA_REV}" for i in range(m)] + ["Formula"],
+        fonts=[BLACK] + [BLACK] * m + [MUTED], fmts=[None] + [F_PCT] * m + [None])
+FA_EB = r
+r = row(ws, r, ["EBITDA"] + [a[4] for a in FA] + ["FY2019 not available in the vendor feed"],
+        fonts=[BOLD] + [BLUE_IN] * m + [MUTED], fmts=[None] + [F_NUM] * m + [None])
+FA_OP = r
+r = row(ws, r, ["Operating income"] + [a[5] for a in FA] + [None],
+        fonts=[BOLD] + [BLUE_IN] * m + [BLACK], fmts=[None] + [F_NUM] * m + [None])
+r = row(ws, r, ["  operating margin"] + [f"={cols(i)}{FA_OP}/{cols(i)}{FA_REV}" for i in range(m)] + ["Formula"],
+        fonts=[BLACK] + [BLACK] * m + [MUTED], fmts=[None] + [F_PCT] * m + [None])
+r = row(ws, r, ["Net income"] + [a[6] for a in FA] + [None],
+        fonts=[BOLD] + [BLUE_IN] * m + [BLACK], fmts=[None] + [F_NUM] * m + [None])
+r = row(ws, r, ["Diluted EPS ($)"] + [a[7] for a in FA] +
+        ["Pre-FY2022 EPS reflects the pre-US-listing share structure and is not comparable"],
+        fonts=[BOLD] + [BLUE_IN] * m + [MUTED], fmts=[None] + ['$0.00'] * m + [None])
+FC = S.FERG_ANNUAL_CF
+FA_CFO = r
+r = row(ws, r, ["Cash from operations"] + [a[2] for a in FC] + [None],
+        fonts=[BOLD] + [BLUE_IN] * m + [BLACK], fmts=[None] + [F_NUM] * m + [None])
+FA_CAP = r
+r = row(ws, r, ["Capital expenditure (abs)"] + [a[3] for a in FC] +
+        ["Sign convention varies in the vendor feed; absolute values used"],
+        fonts=[BOLD] + [BLUE_IN] * m + [MUTED], fmts=[None] + [F_NUM] * m + [None])
+FA_FCF = r
+r = row(ws, r, ["Free cash flow"] + [f"={cols(i)}{FA_CFO}-{cols(i)}{FA_CAP}" for i in range(m)] +
+        ["Formula: CFO less capex. The vendor FCF field is unreliable for FY2024 and is not used"],
+        fonts=[BOLD] + [BOLD] * m + [MUTED], fmts=[None] + [F_NUM] * m + [None])
+r = row(ws, r, ["Capex as % of sales"] + [f"={cols(i)}{FA_CAP}/{cols(i)}{FA_REV}" for i in range(m)] + ["Formula"],
+        fonts=[BLACK] + [BLACK] * m + [MUTED], fmts=[None] + [F_PCT] * m + [None])
+r += 1
+r = note(ws, r, "DATA QUALITY: Quartr's coverage of Ferguson begins with the fiscal year ended 31 July 2018. "
+                "The company reported as a UK-listed group before its US primary listing, and moved from a "
+                "July to a December year end in 2025 — so CY2025 is a transition period and its growth rate "
+                "against FY2025 is not a like-for-like comparison. The FY2024 vendor cash-flow record also "
+                "carries financing lines in thousands rather than millions; those lines are excluded here.")
+r += 2
+
+# ---- Macro
+r = section(ws, r, "Macro series — compiled, with source and retrieval route")
+r = note(ws, r, "COMPILED, NOT DOWNLOADED. Direct retrieval was blocked from the build environment (see Read Me). "
+                "Each row carries the publisher, a link, and the exact route to refresh it automatically — FRED "
+                "series ID, CRS table reference or EPA data portal. Values are as published.")
+r += 1
+r = head(ws, r, ["Series", "Period", "Value", "Unit", "", "", "", "", "", "Source", "Link / retrieval route"])
+MSTART = r
+for name, per, val, unit, src, url, route in S.MACRO:
+    fmt = F_PCT if unit == "%" else (F_NUM1 if isinstance(val, float) else F_NUM)
+    rr = r
+    r = row(ws, r, [name, per, val, unit, None, None, None, None, None, src, route],
+            fonts=[BOLD, MUTED, BLUE_IN, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, MUTED, MUTED],
+            fmts=[None, None, fmt, None, None, None, None, None, None, None, None])
+    ws.cell(row=rr, column=5).value = "link"
+    ws.cell(row=rr, column=5).hyperlink = url
+    ws.cell(row=rr, column=5).font = LINKF
+ws.auto_filter.ref = f"A{MSTART-1}:K{r-1}"
+
+# ============================================================ 16. QUARTERLY
+ws = sheet("Quarterly", [16, 13, 13, 12, 12, 12, 12, 12, 11, 12, 12, 14],
+           "Quarterly Data — As Far Back As Available",
+           "Downloaded from Quartr. One row per reported quarter; $m unless stated. Filter with the header row.",
+           tab="12724A")
+r = 4
+r = section(ws, r, "Core & Main (CNM)")
+r = head(ws, r, ["Fiscal quarter", "Period end", "Reported", "Net sales", "Gross profit", "Gross margin",
+                 "EBITDA", "Operating income", "Net income", "Diluted EPS", "TTM net sales", "Source"])
+CQ = S.CNM_QUARTERLY
+CQ0 = r
+for i, q in enumerate(CQ):
+    lbl, pend, rep, rev, gp, eb, op, ni, eps, url = q
+    rr = r
+    ttm = f"=SUM(D{rr-3}:D{rr})" if i >= 3 else None
+    r = row(ws, r, [lbl, pend, rep, rev, gp, f"=E{rr}/D{rr}", eb, op, ni, eps, ttm, None],
+            fonts=[BOLD, MUTED, MUTED, BLUE_IN, BLUE_IN, BLACK, BLUE_IN, BLUE_IN, BLUE_IN, BLUE_IN, BLACK, BLACK],
+            fmts=[None, None, None, F_NUM1, F_NUM1, F_PCT, F_NUM1, F_NUM1, F_NUM1, '$0.00', F_NUM, None])
+    link(ws, rr, 12, url)
+CQ1 = r - 1
+ws.auto_filter.ref = f"A{CQ0-1}:L{CQ1}"
+r += 1
+r = section(ws, r, "Cross-foot check — quarters against the reported annual")
+r = head(ws, r, ["Fiscal year", "Sum of quarters", "Reported annual", "Difference", "", "", "", "", "", "", "", "Verdict"])
+for fy, qrows, annual_col in [("FY2022", (CQ0+3, CQ0+6), "C"), ("FY2023", (CQ0+7, CQ0+10), "D"),
+                              ("FY2024", (CQ0+11, CQ0+14), "E"), ("FY2025", (CQ0+15, CQ0+18), "F")]:
+    rr = r
+    r = row(ws, r, [fy, f"=SUM(D{qrows[0]}:D{qrows[1]})", f"='Annual'!{annual_col}{CA_REV}",
+                    f"=B{rr}-C{rr}", None, None, None, None, None, None, None,
+                    f'=IF(ABS(D{rr})<0.5,"TIES","CHECK")'],
+            fonts=[BOLD, BOLD, GREEN_LINK, BOLD, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BOLD],
+            fmts=[None, F_NUM1, F_NUM, F_NUM1, None, None, None, None, None, None, None, None])
+r = note(ws, r, "Core & Main's fiscal 2021 is not shown here: Quartr's quarterly coverage starts at Q2 FY2021, "
+                "so the four quarters do not sum to that year. From FY2022 onward every year ties exactly.")
+r += 2
+
+r = section(ws, r, "Ferguson (FERG)")
+r = note(ws, r, "Ferguson reported on a UK half-year basis before its US primary listing. In the vendor feed the "
+                "pre-FY2022 'Q2' and 'Q4' rows are CUMULATIVE half-year and full-year figures, not discrete "
+                "quarters, and are excluded below. Discrete quarterly reporting begins with the quarter ended "
+                "31 October 2021, and every fiscal year from FY2022 ties exactly to the reported annual.")
+r += 1
+r = head(ws, r, ["Fiscal quarter", "Period end", "Reported", "Net sales", "Gross profit", "Gross margin",
+                 "EBITDA", "Operating income", "Net income", "Diluted EPS", "TTM net sales", "Source"])
+FQ = [q for q in json.load(open("data/ferg_quarterly_raw.json"))
+      if q["date"] >= "2021-12-01" and q["rev"] and q["rev"] > 0]
+FQ0 = r
+for i, q in enumerate(FQ):
+    rr = r
+    mm = lambda v: (round(v / 1e6) if isinstance(v, (int, float)) else None)
+    ttm = f"=SUM(D{rr-3}:D{rr})" if i >= 3 else None
+    lbl = q["title"] if q["title"] != "Transition period" else "Transition Q"
+    r = row(ws, r, [lbl, q["date"], q["date"], mm(q["rev"]), mm(q["gp"]), f"=IF(D{rr}=0,0,E{rr}/D{rr})",
+                    mm(q["ebitda"]), mm(q["op"]), mm(q["ni"]), q["eps"], ttm, None],
+            fonts=[BOLD, MUTED, MUTED, BLUE_IN, BLUE_IN, BLACK, BLUE_IN, BLUE_IN, BLUE_IN, BLUE_IN, BLACK, BLACK],
+            fmts=[None, None, None, F_NUM, F_NUM, F_PCT, F_NUM, F_NUM, F_NUM, '$0.00', F_NUM, None])
+    link(ws, rr, 12, q["url"])
+FQ1 = r - 1
+r += 1
+r = section(ws, r, "Cross-foot check — quarters against the reported annual")
+r = head(ws, r, ["Fiscal year", "Sum of quarters", "Reported annual", "Difference", "", "", "", "", "", "", "", "Verdict"])
+for fy, q0, acol in [("FY2022", FQ0, "F"), ("FY2023", FQ0+4, "G"), ("FY2024", FQ0+8, "H"), ("FY2025", FQ0+12, "I")]:
+    rr = r
+    r = row(ws, r, [fy, f"=SUM(D{q0}:D{q0+3})", f"='Annual'!{acol}{FA_REV}", f"=B{rr}-C{rr}",
+                    None, None, None, None, None, None, None, f'=IF(ABS(D{rr})<1,"TIES","CHECK")'],
+            fonts=[BOLD, BOLD, GREEN_LINK, BOLD, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BOLD],
+            fmts=[None, F_NUM, F_NUM, F_NUM, None, None, None, None, None, None, None, None])
+r = note(ws, r, "The 'Transition Q' row is the quarter ended 31 October 2025, reported inside Ferguson's "
+                "transition period as it moved to a calendar year end. It sits outside both FY2025 and CY2026 "
+                "and is therefore excluded from the cross-foot checks above.")
+r += 2
+r = section(ws, r, "Note on precision")
+r = note(ws, r, "Core & Main's Q1 FY2026 and Q1 FY2025 net sales both round to $1.91bn and the vendor feed and "
+                "the company's own deck differ by $1m on which quarter is which. The comparison is flat either "
+                "way. Where a single million matters, go to the 10-Q linked in the Source column.")
+
+# ============================================================ 17. SOURCES
 ws = sheet("Sources", [34, 34, 14, 58], "Sources and Known Biases",
            "Every source with the interest of the party that produced it, so the reader can discount accordingly.",
            tab="5C6E7C")
