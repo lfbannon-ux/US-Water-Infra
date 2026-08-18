@@ -17,6 +17,9 @@ Enterprises (FERG)**.
 | [`analysis/06-asset-level-data-sources.md`](analysis/06-asset-level-data-sources.md) | Where pipe installation year and repair history actually exist in the public record — and where they don't |
 | [`US-Water-Infrastructure-Analysis.xlsx`](US-Water-Infrastructure-Analysis.xlsx) | 17-tab workbook: every figure with its source, a live formula-driven forward model, and **Annual** and **Quarterly** tabs holding the full downloaded company history plus 74 sourced macro series |
 | [`data/series.py`](data/series.py) | The raw data behind those tabs, as a plain Python module — every period carries its source URL |
+| [`data/SERIES-LINKS.md`](data/SERIES-LINKS.md) | **Every time-series download link** — 23 FRED series with direct CSV endpoints, plus 32 bulk data portals and primary documents |
+| [`data/fetch_series.py`](data/fetch_series.py) | Run it on a networked machine to pull every FRED series to CSV and build a merged table. No API key needed |
+| [`data/series_catalogue.csv`](data/series_catalogue.csv) | The same catalogue, machine-readable |
 
 ## Published report
 

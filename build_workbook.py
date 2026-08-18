@@ -10,6 +10,7 @@ from openpyxl.comments import Comment
 import json, sys
 sys.path.insert(0, "data")
 import series as S
+import catalogue as CAT
 
 # ---------------------------------------------------------------- style kit
 FONT = "Arial"
@@ -112,7 +113,7 @@ ws = sheet("Read Me", [46, 62, 46], "US Water Infrastructure — Analysis Workbo
            "Historical spending · forward budget model · technical drivers · Core & Main and Ferguson")
 r = 4
 r = section(ws, r, "What this workbook contains")
-r = note(ws, r, "A quantitative companion to the written analysis. Seventeen tabs covering who funds US water "
+r = note(ws, r, "A quantitative companion to the written analysis. Eighteen tabs covering who funds US water "
                 "infrastructure, what annual spend should look like through 2035, the engineering evidence for "
                 "replacement, where the underlying asset data actually lives, the full downloaded time series, and "
                 "how it all flows through to the two listed distributors with direct exposure.")
@@ -134,6 +135,7 @@ for t, d, f in [
     ("Asset Data Sources", "Where pipe installation year and repair history exist in the public record", "No"),
     ("Annual", "Full annual history for both companies plus 74 macro series with sources", "Partly"),
     ("Quarterly", "Every reported quarter for both companies, with cross-foot checks", "Partly"),
+    ("Series Links", "Direct download endpoints for every series — FRED CSV, portals, primary docs", "No"),
     ("Sources", "Every source with its known interest or bias", "No"),
 ]:
     r = row(ws, r, [t, d, f])
@@ -1613,7 +1615,75 @@ r = note(ws, r, "Core & Main's Q1 FY2026 and Q1 FY2025 net sales both round to $
                 "the company's own deck differ by $1m on which quarter is which. The comparison is flat either "
                 "way. Where a single million matters, go to the 10-Q linked in the Source column.")
 
-# ============================================================ 17. SOURCES
+# ============================================================ 17. SERIES LINKS
+ws = sheet("Series Links", [22, 52, 11, 13, 9, 11, 11, 62], "Time-Series Links",
+           "Direct download endpoints. FRED CSV needs no API key. Run data/fetch_series.py to pull them all.",
+           tab="0B5FA5")
+r = 4
+r = note(ws, r, "NOT VERIFIED LIVE. Every FRED series ID below was confirmed against its FRED series page, but "
+                "could not be fetched from the build environment (egress allowlist blocks fred.stlouisfed.org). "
+                "Run  python3 data/fetch_series.py --check  on a networked machine to validate every ID and "
+                "name any that fail.")
+r += 1
+r = section(ws, r, "FRED series — one command downloads all of them")
+r = head(ws, r, ["Group", "Description", "Series ID", "Frequency", "Units", "From", "CSV", "Why it matters"])
+FL0 = r
+for g, sid, desc, freq, units, start, why in CAT.FRED:
+    rr = r
+    r = row(ws, r, [g, desc, sid, freq, units, start, None, why],
+            fonts=[MUTED, BLACK, BOLD, MUTED, MUTED, MUTED, BLACK, MUTED])
+    c = ws.cell(row=rr, column=7, value="csv")
+    c.hyperlink = CAT.FREDCSV.format(sid=sid)
+    c.font = LINKF
+    c.border = BOX
+FL1 = r - 1
+ws.auto_filter.ref = f"A{FL0-1}:H{FL1}"
+r += 1
+r = note(ws, r, "Multiple series in one request: https://fred.stlouisfed.org/graph/fredgraph.csv?id=ID1,ID2,ID3")
+r += 2
+
+r = section(ws, r, "Bulk data portals and primary documents")
+r = head(ws, r, ["Group", "Source", "Format", "Coverage", "", "", "Link", "Note"])
+PL0 = r
+for g, name, url, fmt, cov, note_ in CAT.PORTALS:
+    rr = r
+    r = row(ws, r, [g, name, fmt, cov, None, None, None, note_],
+            fonts=[MUTED, BOLD, MUTED, MUTED, BLACK, BLACK, BLACK, MUTED])
+    c = ws.cell(row=rr, column=7, value="open")
+    c.hyperlink = url
+    c.font = LINKF
+    c.border = BOX
+PL1 = r - 1
+r += 1
+r = section(ws, r, "What is genuinely downloadable, ranked")
+r = head(ws, r, ["Rank", "Source", "", "", "", "", "", "What you get"])
+for i, (nm, wt) in enumerate([
+    ("FRED", "Every series above, CSV, no key, one command."),
+    ("EPA CWNS 2022 facility-level data", "CSV or Access, nationwide or by state, with a data dictionary. "
+     "The richest free dataset in the sector."),
+    ("CBO supplementary workbook", "The full 1956-2023 annual series by mode, capital vs O&M, federal vs "
+     "state/local. One XLSX behind publication 60874."),
+    ("Census C30 historical time series", "Monthly construction spending back to 1993."),
+    ("Municipal GIS portals", "Segment-level pipe age and material, utility by utility."),
+    ("MSRB EMMA", "Free, and the densest utility-level asset and capital-plan disclosure available."),
+], 1):
+    r = row(ws, r, [i, nm, None, None, None, None, None, wt],
+            fonts=[BOLD, BOLD, BLACK, BLACK, BLACK, BLACK, BLACK, MUTED])
+r += 1
+r = section(ws, r, "What is not downloadable")
+r = head(ws, r, ["Item", "Status", "", "", "", "", "", "Note"])
+for nm, st, nt in [
+    ("Bluefield rate index", "SUBSCRIPTION", "Free substitute: FRED CUSR0000SEHG01 (CPI water and sewerage maintenance)."),
+    ("EPA DWINSA underlying responses", "NOT PUBLISHED", "Aggregated national and state figures only."),
+    ("AWIA risk and resilience assessments", "CONFIDENTIAL BY STATUTE", "Withheld on security grounds."),
+    ("PIPEiD", "SECURED PLATFORM", "Exists, but built for utility decision support, not open data."),
+    ("National water pipe age registry", "DOES NOT EXIST",
+     "PHMSA's By-Decade Inventory is the gas-sector comparator showing exactly what water lacks."),
+]:
+    r = row(ws, r, [nm, st, None, None, None, None, None, nt],
+            fonts=[BOLD, BOLD, BLACK, BLACK, BLACK, BLACK, BLACK, MUTED])
+
+# ============================================================ 18. SOURCES
 ws = sheet("Sources", [34, 34, 14, 58], "Sources and Known Biases",
            "Every source with the interest of the party that produced it, so the reader can discount accordingly.",
            tab="5C6E7C")
