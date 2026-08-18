@@ -109,9 +109,10 @@ ws = sheet("Read Me", [46, 62, 46], "US Water Infrastructure — Analysis Workbo
            "Historical spending · forward budget model · technical drivers · Core & Main and Ferguson")
 r = 4
 r = section(ws, r, "What this workbook contains")
-r = note(ws, r, "A quantitative companion to the written analysis. Fourteen tabs covering who funds US water "
+r = note(ws, r, "A quantitative companion to the written analysis. Fifteen tabs covering who funds US water "
                 "infrastructure, what annual spend should look like through 2035, the engineering evidence for "
-                "replacement, and how both flow through to the two listed distributors with direct exposure.")
+                "replacement, where the underlying asset data actually lives, and how it all flows through to "
+                "the two listed distributors with direct exposure.")
 r += 1
 r = head(ws, r, ["Tab", "What it holds", "Formula-driven?"])
 for t, d, f in [
@@ -127,6 +128,7 @@ for t, d, f in [
     ("Core and Main", "Five-year P&L, end-market mix, guidance, derived metrics", "Yes"),
     ("Ferguson", "Eight-year P&L, US customer groups, waterworks estimate", "Yes"),
     ("Comparison", "Side by side plus revenue sensitivity to market growth", "Yes"),
+    ("Asset Data Sources", "Where pipe installation year and repair history exist in the public record", "No"),
     ("Sources", "Every source with its known interest or bias", "No"),
 ]:
     r = row(ws, r, [t, d, f])
@@ -1259,7 +1261,128 @@ r = note(ws, r, "VERIFY BEFORE USE: public-sector figures in this workbook were 
                 "to cbo.gov, epa.gov, census.gov, congress.gov and fred.stlouisfed.org. Company financials came "
                 "from Quartr's primary filings and do not carry this caveat. See the Read Me tab.")
 
-# ============================================================ 14. SOURCES
+# ============================================================ 14. ASSET DATA SOURCES
+ws = sheet("Asset Data Sources", [34, 30, 16, 16, 52], "Pipe Age and Repair History — What Is Public",
+           "Where segment-level installation year and repair history can actually be obtained.", tab="A8451C")
+r = 4
+r = section(ws, r, "The structural gap")
+r = head(ws, r, ["Sector", "National age registry?", "Granularity", "Publisher", "Note"])
+r = row(ws, r, ["Natural gas + hazardous liquid", "YES", "National, by decade", "PHMSA",
+                "By-Decade Inventory: mileage by decade of installation for gas distribution, gas transmission "
+                "and hazardous liquid. Operators must file annual reports covering age, length, diameter, material."],
+        fonts=[BOLD, BOLD, BLACK, BOLD, MUTED])
+r = row(ws, r, ["Water and wastewater", "NO", "None", "—",
+                "No federal reporting requirement for pipe age. SDWIS carries compliance and violations but no "
+                "distribution-system asset inventory. Responsibility sits with ~50,000 community water systems."],
+        fonts=[BOLD, BOLD, BLACK, BOLD, MUTED], band=True)
+r = note(ws, r, "CONSEQUENCE: every national water pipe-age figure in this workbook is a survey estimate, not a "
+                "census. The USU study covers ~400,000 miles — over 17% of the 2.3m miles in the US and Canada.")
+r += 2
+
+r = section(ws, r, "Tier 1 — asset-level and genuinely public")
+r = head(ws, r, ["Source type", "What it contains", "Granularity", "Cost", "Examples and caveats"])
+for a, b, c_, d, e in [
+    ("Municipal GIS open-data portals", "Water main layer: installation year, material, diameter, length, "
+     "sometimes lining status", "Pipe segment", "Free",
+     "Seattle Public Utilities Water Mains (incl. a 'Presumed Unlined' condition layer); Open Data DC; "
+     "federated search via catalog.data.gov. THE BEST SOURCE FOR PIPE AGE. Install year often null on the "
+     "oldest segments — precisely the ones that matter."),
+    ("Water main break datasets", "Break location and date", "Point location",
+     "Free", "DC Water publishes five years of breaks, updated weekly. Records FAILURES, not planned "
+     "replacement — a segment replaced on schedule generates no record."),
+    ("Street opening / excavation permits", "Who dug, where, when, why", "Street segment", "Free",
+     "NYCStreets permit management; Chicago CDOT Office of Underground Coordination. The best available proxy "
+     "for LAST PERIOD OF REPAIR, and it captures planned work that break data misses."),
+    ("Lead service line inventories", "Service line material by location incl. lead, galvanized-requiring-"
+     "replacement and unknown", "Address / parcel", "Free",
+     "Mandatory public accessibility since 16 Oct 2024; systems >50,000 must publish online. Baseline "
+     "inventory and replacement plan due 1 Nov 2027, updated ANNUALLY. State dashboards: New York, Minnesota."),
+]:
+    r = row(ws, r, [a, b, c_, d, e], fonts=[BOLD, BLACK, BLACK, BLACK, MUTED])
+r += 1
+
+r = section(ws, r, "Tier 2 — system-level, and the most useful for an investor")
+r = head(ws, r, ["Source type", "What it contains", "Granularity", "Cost", "Examples and caveats"])
+for a, b, c_, d, e in [
+    ("Municipal bond official statements", "System description: miles of main, material mix, age profile, "
+     "capital plan, replacement rates, rate history", "Utility", "Free",
+     "MSRB EMMA — official statements for essentially every muni bond since 1990, plus continuing disclosure. "
+     "Disclosure liability compels the issuer to describe the asset. HIGHEST-DENSITY PUBLIC SOURCE."),
+    ("Asset management plans / CIPs", "Segment register with material, diameter, install year, replacement "
+     "value, maintenance history; sequenced CIP", "Utility", "Free",
+     "Published directly by some utilities, e.g. Sacramento Suburban Water District's Distribution Main Asset "
+     "Management Plan. Availability is patchy."),
+    ("Investor-owned utility 10-Ks", "Replacement cycle, miles to be replaced, capital plans", "Company", "Free",
+     "American Water: renewal rate improved from a 250-year cycle (2009) to ~125-year by 2028; ~2,000 miles "
+     "2024-2028; $34-38bn over ten years. An SEC filing, not an advocacy report."),
+    ("State PUC rate-case dockets", "Depreciation studies with assumed service lives by asset class; "
+     "plant-in-service vintage", "Company / asset class", "Free", "Public docket filings, state by state."),
+    ("CSO / SSO consent decrees", "System condition assessments and dated remediation schedules", "System",
+     "Free", "DOJ/EPA lodged decrees. Effectively a court-supervised published asset plan."),
+]:
+    r = row(ws, r, [a, b, c_, d, e], fonts=[BOLD, BLACK, BLACK, BLACK, MUTED])
+r += 1
+
+r = section(ws, r, "Tier 3 — national aggregates (estimates, not censuses)")
+r = head(ws, r, ["Source", "What it gives", "Coverage", "", "Limitation"])
+for a, b, c_, e in [
+    ("USU Water Main Break Rates (Dec 2023)", "Break rate and age by material; avg failure age 53 yrs; "
+     "33% of mains >50 yrs", "802 utilities, ~400,000 miles",
+     ">17% of the 2.3m miles in US+Canada. Best available, still a sample."),
+    ("EPA CWNS 2022", "FACILITY-LEVEL project and needs data, downloadable CSV or Access",
+     "All states, 100% participation", "Projects and costs, NOT pipe age. Wastewater only."),
+    ("EPA 7th DWINSA", "National and state needs; 9.2m lead service lines", "National",
+     "Aggregated. Underlying utility responses are not public."),
+    ("UMich Center for Sustainable Systems", "Average age of US water pipes 45 years (2020), up from 25 (1970)",
+     "National", "Derived estimate, not a measurement."),
+]:
+    r = row(ws, r, [a, b, c_, None, e], fonts=[BOLD, BLACK, BLACK, BLACK, MUTED])
+r += 1
+
+r = section(ws, r, "What does not exist")
+r = head(ws, r, ["Item", "Status", "", "", "Note"])
+for a, b, e in [
+    ("Federal water analogue to PHMSA By-Decade Inventory", "DOES NOT EXIST",
+     "No agency collects water pipe age."),
+    ("SDWIS distribution-system asset inventory", "DOES NOT EXIST",
+     "SDWIS covers compliance, violations, enforcement and basic system inventory only."),
+    ("PIPEiD (Virginia Tech SWIM Center)", "EXISTS BUT NOT OPEN",
+     "Bureau of Reclamation funded; data from 500+ US water utilities and 100 federal facilities. A SECURED "
+     "utility decision-support platform, not an open dataset. Its existence is the clearest evidence the gap "
+     "is real and recognised."),
+    ("AWIA s.2013 risk and resilience assessments", "CONFIDENTIAL BY STATUTE",
+     "Deliberately withheld on security grounds."),
+]:
+    r = row(ws, r, [a, b, None, None, e], fonts=[BOLD, BOLD, BLACK, BLACK, MUTED])
+r += 1
+
+r = section(ws, r, "Recipe for a bottom-up demand estimate")
+r = head(ws, r, ["Step", "Action", "", "", "Output"])
+for i, (a, e) in enumerate([
+    ("Select the 20-30 utilities with the largest capital programmes",
+     "Identifiable from EMMA issuance volume and CWNS project data"),
+    ("Pull each water main GIS layer; build a vintage histogram",
+     "Miles by installation decade and material; implied replacement rate from year-on-year layer changes"),
+    ("Pull the EMMA official statement and CIP", "Stated forward capital plan; continuing disclosure gives actuals vs plan"),
+    ("Pull the LSL inventory, and from Nov 2027 the annual replacement plan", "Service line counts and realised replacement pace"),
+    ("Pull break datasets and street-opening permits", "Validation that stated replacement is physically happening"),
+], 1):
+    r = row(ws, r, [f"{i}", a, None, None, e], fonts=[BOLD, BLACK, BLACK, BLACK, MUTED])
+r += 1
+r = note(ws, r, "LIMITATIONS. Coverage skews to large, well-resourced utilities — most of the ~50,000 community "
+                "water systems publish nothing, so extrapolating from the transparent ones overstates system "
+                "quality and understates need. Installation year is frequently null on the oldest segments. "
+                "'Last repair' is almost never an attribute — breaks and permits are proxies, and both miss "
+                "trenchless rehabilitation such as CIPP lining and pipe bursting. Schemas are not standardised "
+                "across utilities, which is the specific problem PIPEiD exists to solve and has not solved.")
+r += 1
+r = note(ws, r, "VERIFICATION CAVEAT: none of these portals could be opened from the session that produced this "
+                "workbook — the environment's egress allowlist blocks all external hosts. Descriptions are built "
+                "from search evidence about what these sources contain, not from inspecting them. Confirm each "
+                "dataset's actual schema, and how sparsely the installation-year field is populated, before "
+                "relying on it.")
+
+# ============================================================ 15. SOURCES
 ws = sheet("Sources", [34, 34, 14, 58], "Sources and Known Biases",
            "Every source with the interest of the party that produced it, so the reader can discount accordingly.",
            tab="5C6E7C")

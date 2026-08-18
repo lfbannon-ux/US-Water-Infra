@@ -14,6 +14,7 @@ Enterprises (FERG)**.
 | [`analysis/03-technical-drivers.md`](analysis/03-technical-drivers.md) | Why the infrastructure actually needs replacement — materials, failure mechanisms, break-rate data, and the evidence that cuts *against* the consensus |
 | [`analysis/04-company-linkage.md`](analysis/04-company-linkage.md) | Sizing CNM and FERG against the addressable market, sensitivity to the funding cliff, and what to monitor |
 | [`analysis/05-sources-and-caveats.md`](analysis/05-sources-and-caveats.md) | Every source, its known bias, and where this analysis is uncertain |
+| [`analysis/06-asset-level-data-sources.md`](analysis/06-asset-level-data-sources.md) | Where pipe installation year and repair history actually exist in the public record — and where they don't |
 | [`US-Water-Infrastructure-Analysis.xlsx`](US-Water-Infrastructure-Analysis.xlsx) | 14-tab workbook: every figure with its source, plus a live formula-driven forward model you can re-run on your own assumptions |
 
 ## Published report
@@ -51,6 +52,12 @@ The source is checked in as [`report.html`](report.html).
    line replacement (9.2M lines) and PFAS treatment are calendar-dated legal obligations
    with hard deadlines. Corroding pipe is a discretionary, deferrable expense; a consent
    decree is not.
+7. **There is no national water pipe registry — but pipe age is obtainable utility by
+   utility.** Gas pipelines have PHMSA's By-Decade Inventory; water has no equivalent, and
+   SDWIS holds no asset data. Installation year is nevertheless published at *segment level*
+   by many municipal GIS open-data portals, and repair history is recoverable from water main
+   break datasets and street-opening permits. See
+   [`06-asset-level-data-sources.md`](analysis/06-asset-level-data-sources.md).
 
 ## Data access limitation
 
