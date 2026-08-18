@@ -15,6 +15,12 @@ Enterprises (FERG)**.
 | [`analysis/04-company-linkage.md`](analysis/04-company-linkage.md) | Sizing CNM and FERG against the addressable market, sensitivity to the funding cliff, and what to monitor |
 | [`analysis/05-sources-and-caveats.md`](analysis/05-sources-and-caveats.md) | Every source, its known bias, and where this analysis is uncertain |
 
+## Published report
+
+A designed, single-page version of this analysis (with charts) is published as an artifact:
+**[The Buried Balance Sheet](https://claude.ai/code/artifact/35f197f4-2b41-4874-a67f-fc33c277f891)**.
+The source is checked in as [`report.html`](report.html).
+
 ## Headline conclusions
 
 1. **Federal money is a rounding error at the margin, not the base.** State and local

@@ -1,0 +1,910 @@
+<title>The Buried Balance Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+/* ============ tokens: light is the base, both dark states override ============ */
+:root{
+  --paper:#EEF1F3; --surface:#FFFFFF; --surface-2:#F7F9FA;
+  --ink:#101A22; --ink-2:#33454F; --muted:#5C6E7C;
+  --rule:#D3DBE1; --rule-soft:#E4EAEE;
+  --water:#0B5FA5; --sewer:#12724A; --rust:#A8451C;
+  --water-wash:#0B5FA514; --rust-wash:#A8451C12;
+  --shadow:0 1px 2px #101a2210, 0 8px 24px #101a220a;
+  --grid:#101a2214;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1418; --surface:#141D23; --surface-2:#19242B;
+    --ink:#E2EAF0; --ink-2:#BECCD6; --muted:#8DA1AF;
+    --rule:#243139; --rule-soft:#1D272E;
+    --water:#3E8FD0; --sewer:#2F9A6B; --rust:#C9633A;
+    --water-wash:#3E8FD01f; --rust-wash:#C9633A1a;
+    --shadow:0 1px 2px #0000004d, 0 8px 24px #00000033;
+    --grid:#E2EAF01a;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1418; --surface:#141D23; --surface-2:#19242B;
+  --ink:#E2EAF0; --ink-2:#BECCD6; --muted:#8DA1AF;
+  --rule:#243139; --rule-soft:#1D272E;
+  --water:#3E8FD0; --sewer:#2F9A6B; --rust:#C9633A;
+  --water-wash:#3E8FD01f; --rust-wash:#C9633A1a;
+  --shadow:0 1px 2px #0000004d, 0 8px 24px #00000033;
+  --grid:#E2EAF01a;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Serif 4",Georgia,"Times New Roman",serif;
+  font-size:17.5px; line-height:1.66; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.disp{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance}
+.mono,code,th,.tag,.eyebrow,.num,figcaption,.legend,.axis{
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ============ frame ============ */
+.frame{max-width:1080px;margin:0 auto;padding:0 28px}
+.prose{max-width:67ch;margin-left:auto;margin-right:auto}
+.prose>*+*{margin-top:1.1em}
+
+/* ============ top bar ============ */
+header.bar{
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule);
+}
+.bar .frame{display:flex;align-items:center;gap:20px;height:52px}
+.bar .mark{font-family:Archivo,sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;
+  color:var(--ink);white-space:nowrap}
+.bar .mark span{color:var(--water)}
+nav.parts{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+nav.parts::-webkit-scrollbar{display:none}
+nav.parts a{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:6px 9px;border-radius:4px;white-space:nowrap}
+nav.parts a:hover{color:var(--ink);background:var(--surface)}
+nav.parts a:focus-visible{outline:2px solid var(--water);outline-offset:1px}
+
+/* ============ hero ============ */
+.hero{padding:72px 0 40px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.eyebrow b{color:var(--water);font-weight:600}
+h1{font-size:clamp(38px,6.2vw,66px);line-height:1.02;letter-spacing:-.028em;font-weight:700;
+  margin:18px 0 0;max-width:15ch}
+.standfirst{font-size:clamp(19px,2.2vw,22px);line-height:1.5;color:var(--ink-2);max-width:56ch;margin-top:22px}
+.byline{margin-top:26px;font-size:11.5px;letter-spacing:.05em;color:var(--muted);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.byline i{font-style:normal;opacity:.45}
+
+/* ============ stat strip ============ */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:44px}
+.stat{background:var(--surface);padding:18px 18px 16px}
+.stat .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;line-height:1.4}
+.stat .v{font-family:Archivo,sans-serif;font-weight:700;font-size:29px;letter-spacing:-.02em;
+  margin-top:8px;font-variant-numeric:tabular-nums;line-height:1}
+.stat .n{font-size:12.5px;color:var(--muted);margin-top:7px;line-height:1.4}
+.stat.water .v{color:var(--water)} .stat.rust .v{color:var(--rust)} .stat.sewer .v{color:var(--sewer)}
+
+/* ============ parts ============ */
+section.part{padding:68px 0 8px;border-top:1px solid var(--rule)}
+section.part:first-of-type{border-top:none}
+.part-head{display:flex;gap:20px;align-items:baseline;margin-bottom:8px}
+.part-num{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--water);
+  letter-spacing:.08em;padding-top:.5em;flex:none}
+h2{font-size:clamp(27px,3.6vw,38px);line-height:1.1;letter-spacing:-.022em;font-weight:700;margin:0;max-width:20ch}
+.part-sub{color:var(--muted);font-size:15.5px;margin:10px 0 0 0;max-width:60ch}
+h3{font-size:20px;line-height:1.28;letter-spacing:-.012em;font-weight:600;margin:2.3em 0 .1em}
+h4{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  margin:2em 0 .2em;font-family:"IBM Plex Mono",monospace}
+p{margin:0}
+strong{font-weight:600;color:var(--ink)}
+a{color:var(--water);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+ul,ol{margin:0;padding-left:1.15em}
+li+li{margin-top:.4em}
+
+/* ============ data blocks (break out of prose measure) ============ */
+.block{margin:34px 0}
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface);
+  box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+caption{caption-side:top;text-align:left;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:14px 16px 0}
+th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  text-align:left;padding:13px 16px;border-bottom:1px solid var(--rule);vertical-align:bottom}
+td{padding:11px 16px;border-bottom:1px solid var(--rule-soft);vertical-align:top;color:var(--ink-2);
+  font-family:"Source Serif 4",serif}
+tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  font-size:13.5px;color:var(--ink);white-space:nowrap}
+tbody tr:hover td{background:var(--surface-2)}
+td strong{color:var(--ink)}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.05em;padding:2px 7px;
+  border-radius:3px;white-space:nowrap;display:inline-block}
+.pill.hi{background:var(--rust-wash);color:var(--rust);border:1px solid color-mix(in srgb,var(--rust) 32%,transparent)}
+.pill.ok{background:#12724a14;color:var(--sewer);border:1px solid color-mix(in srgb,var(--sewer) 32%,transparent)}
+:root[data-theme="dark"] .pill.ok,
+:root:not([data-theme="light"]) .pill.ok{background:#2F9A6B1f}
+
+/* ============ figures ============ */
+figure{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  padding:20px 20px 16px;box-shadow:var(--shadow)}
+figure .ftitle{font-family:Archivo,sans-serif;font-weight:600;font-size:16px;letter-spacing:-.01em}
+figure .fsub{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45;
+  font-family:"IBM Plex Mono",monospace;letter-spacing:.01em}
+figcaption{font-size:11.5px;color:var(--muted);margin-top:14px;border-top:1px solid var(--rule-soft);
+  padding-top:11px;line-height:1.5}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:16px;height:3px;border-radius:2px;flex:none}
+.chartwrap{position:relative;margin-top:18px;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+.axis{font-size:10.5px;fill:var(--muted);letter-spacing:.03em}
+.vlabel{font-size:11.5px;fill:var(--ink);font-family:"IBM Plex Mono",monospace;
+  font-variant-numeric:tabular-nums;font-weight:500}
+.matlabel{font-size:12.5px;fill:var(--ink-2);font-family:"IBM Plex Mono",monospace}
+.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;background:var(--surface);
+  border:1px solid var(--rule);border-radius:5px;padding:8px 10px;font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px;color:var(--ink);box-shadow:var(--shadow);white-space:nowrap;z-index:5;
+  transform:translate(-50%,-118%)}
+.tip b{color:var(--muted);font-weight:400}
+
+/* ============ split bar ============ */
+.splitbar{display:flex;height:52px;border-radius:5px;overflow:hidden;gap:2px;margin-top:18px}
+.splitbar div{display:flex;align-items:center;padding:0 14px;font-family:"IBM Plex Mono",monospace;
+  font-size:12px;color:#fff;letter-spacing:.02em}
+.splitbar .sl{background:var(--water);flex:0 0 92%}
+.splitbar .fd{background:var(--rust);flex:1;justify-content:flex-end;padding:0 10px}
+
+/* ============ callouts ============ */
+.verdict{border-left:3px solid var(--water);background:var(--water-wash);padding:20px 22px;border-radius:0 6px 6px 0}
+.verdict.counter{border-left-color:var(--rust);background:var(--rust-wash)}
+.verdict .lab{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--water);font-weight:600;margin-bottom:8px}
+.verdict.counter .lab{color:var(--rust)}
+.verdict p{font-size:16.5px;line-height:1.55}
+blockquote{margin:0;padding:0 0 0 20px;border-left:2px solid var(--rule);font-style:italic;color:var(--ink-2)}
+blockquote cite{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  letter-spacing:.03em;color:var(--muted);margin-top:10px}
+
+footer{border-top:1px solid var(--rule);margin-top:72px;padding:38px 0 64px;color:var(--muted);font-size:13.5px}
+footer .frame>*+*{margin-top:12px}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:640px){
+  .part-head{flex-direction:column;gap:6px}
+  .hero{padding:48px 0 32px}
+  body{font-size:16.5px}
+}
+</style>
+
+<header class="bar">
+  <div class="frame">
+    <div class="mark">US WATER INFRASTRUCTURE <span>/</span> CNM &amp; FERG</div>
+    <nav class="parts">
+      <a href="#p1">01 Who pays</a>
+      <a href="#p2">02 Forward budget</a>
+      <a href="#p3">03 Why replace</a>
+      <a href="#p4">04 The companies</a>
+      <a href="#p5">05 Caveats</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="frame">
+    <div class="eyebrow"><b>Sector analysis</b> <i>·</i> August 2026 <i>·</i> Water &amp; wastewater distribution</div>
+    <h1>The Buried Balance Sheet</h1>
+    <p class="standfirst">Federal money funds under a tenth of US water infrastructure. The engineering case for
+    replacement is real but narrower than the headline numbers claim — and the IIJA cliff is the most
+    over-discussed risk in the sector.</p>
+    <div class="byline">
+      <span>CBO · EPA · GAO · USGS · Census · ASCE · AWWA · Utah State University · Bluefield Research</span>
+      <i>·</i><span>Company data sourced from Quartr</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat water">
+        <div class="k">State &amp; local share</div>
+        <div class="v">92–96%</div>
+        <div class="n">of US water infrastructure spending, unchanged since 1956 — CBO</div>
+      </div>
+      <div class="stat">
+        <div class="k">National capital base</div>
+        <div class="v">~$88bn</div>
+        <div class="n">water-related construction put in place, annualised — Census C30</div>
+      </div>
+      <div class="stat rust">
+        <div class="k">IIJA net step-down</div>
+        <div class="v">7.6%</div>
+        <div class="n">of that base, phased 2027–30 — not the 100% often assumed</div>
+      </div>
+      <div class="stat sewer">
+        <div class="k">Rate growth 2025</div>
+        <div class="v">+5.1%</div>
+        <div class="n">water &amp; sewer bills, +24.2% over five years — Bluefield</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ================= PART 1 ================= -->
+<section class="part" id="p1">
+  <div class="frame">
+    <div class="part-head">
+      <div class="part-num">01</div>
+      <div>
+        <h2>Who actually pays for it</h2>
+        <p class="part-sub">The money map — and why federal appropriations are a second-order variable for revenue.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <p>The Congressional Budget Office's <em>Public Spending on Transportation and Water Infrastructure,
+    1956 to 2023</em> is the authoritative long-run series. Total public spending on transportation and
+    water infrastructure reached <strong>$626bn in 2023</strong> — about 2.3% of GDP — of which water
+    utilities took roughly 28%. Within water, <strong>state and local governments fund 92%</strong>, and
+    around 96% of water supply and wastewater treatment facilities specifically.</p>
+    <p>Two consequences follow, and they govern everything downstream.</p>
+    <ol>
+      <li><strong>Washington sets rules far more powerfully than it sets budgets.</strong> A lead pipe
+      mandate moves more distributor volume than a grant programme of the same nominal size.</li>
+      <li><strong>There is no single appropriations line to track.</strong> The real budget is 50 states,
+      ~50,000 community water systems and ~17,500 wastewater utilities, funded by rates and municipal debt.</li>
+    </ol>
+  </div>
+
+  <div class="frame block">
+    <figure>
+      <div class="ftitle">Water infrastructure spending by level of government, 2023</div>
+      <div class="fsub">Share of total public spending on water utilities · CBO, February 2025</div>
+      <div class="splitbar" role="img" aria-label="State and local governments fund 92 percent of water infrastructure spending; the federal government funds 8 percent.">
+        <div class="sl">State &amp; local — 92%</div>
+        <div class="fd">Federal 8%</div>
+      </div>
+      <figcaption>On the narrower definition covering water supply and wastewater treatment facilities only,
+      the state and local share rises to ~96%. Operations and maintenance accounted for 56.7% of all
+      public infrastructure spending in 2023 ($355bn of $625.8bn) — capital is the minority of the total.</figcaption>
+    </figure>
+  </div>
+
+  <div class="frame prose">
+    <h3>The federal channels, sized</h3>
+    <p>Four federal pipes feed the sector. Only one of them is large, and it is expiring.</p>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>Federal water infrastructure channels · status August 2026</caption>
+        <thead><tr>
+          <th>Channel</th><th>Mechanism</th><th class="n">Annual scale</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>State Revolving Funds</strong><br><span style="color:var(--muted);font-size:13px">CWSRF + DWSRF</span></td>
+            <td>Federal capitalisation grants to state revolving loan funds</td>
+            <td class="n">$2.7bn base<br>$11.4bn with IIJA</td>
+            <td>Regular appropriations <strong>flat</strong> FY24–26</td>
+          </tr>
+          <tr>
+            <td><strong>IIJA supplemental</strong></td>
+            <td>&gt;$50bn over FY2022–26 across five pots incl. $15bn for lead lines, $4bn emerging contaminants</td>
+            <td class="n">~$8.7bn incremental</td>
+            <td><span class="pill hi">Expires 30 Sep 2026</span></td>
+          </tr>
+          <tr>
+            <td><strong>WIFIA</strong></td>
+            <td>Federal credit at Treasury rates — leverage, not subsidy</td>
+            <td class="n">~$1–2bn closings</td>
+            <td>$23bn deployed / 152 loans; ~$11bn available</td>
+          </tr>
+          <tr>
+            <td><strong>Earmarks</strong><br><span style="color:var(--muted);font-size:13px">Community Project Funding</span></td>
+            <td>Carved <em>out of</em> the SRF appropriation, not added to it</td>
+            <td class="n">~$1bn</td>
+            <td>~1,200 water projects in the FY2027 House bill</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <div class="verdict block">
+      <div class="lab">The variable that actually matters</div>
+      <p>A single year of national water and sewer rate increases generates more incremental utility
+      spending capacity than the entire annual IIJA water supplemental. Bills rose <strong>5.1% in 2025</strong>
+      and <strong>24.2% cumulatively over five years</strong> across 50 cities — outpacing inflation, with
+      water up 6.0% and wastewater up 4.8% year on year.</p>
+    </div>
+    <p>There is also a loss that funds its own repair. Roughly <strong>19.5% of treated drinking water —
+    about 6.75 billion gallons a day — never reaches a paying customer</strong>, costing utilities
+    $6.4bn a year in uncaptured revenue. Every mile replaced converts lost water into billable revenue,
+    with a payback computable at the utility level and no grant money required. It is why metering and
+    leak detection grow faster than the pipe business itself.</p>
+  </div>
+</section>
+
+<!-- ================= PART 2 ================= -->
+<section class="part" id="p2">
+  <div class="frame">
+    <div class="part-head">
+      <div class="part-num">02</div>
+      <div>
+        <h2>What annual spend should look like</h2>
+        <p class="part-sub">Separating "needs" — advocacy arithmetic — from budgets, and doing the IIJA cliff maths honestly.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <p>Every number in this sector traces to one of four studies. They disagree by a factor of three
+    because they are not measuring the same thing.</p>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>The four published estimates, reconciled</caption>
+        <thead><tr>
+          <th>Source</th><th>Headline</th><th class="n">Annualised</th><th>What it actually measures</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>EPA 7th DWINSA</strong><br><span style="color:var(--muted);font-size:13px">Sep 2023</span></td>
+            <td>$625bn / 20yr</td><td class="n">$31.3bn</td>
+            <td><em>SRF-eligible</em> drinking water projects, self-reported by states</td>
+          </tr>
+          <tr>
+            <td><strong>EPA CWNS 2022</strong><br><span style="color:var(--muted);font-size:13px">Apr 2024</span></td>
+            <td>$630.1bn / 20yr</td><td class="n">$31.5bn</td>
+            <td><em>SRF-eligible</em> clean water needs with documentation</td>
+          </tr>
+          <tr>
+            <td><strong>ASCE Bridging the Gap</strong><br><span style="color:var(--muted);font-size:13px">2024</span></td>
+            <td>$99bn/yr <em>gap</em></td><td class="n">~$187bn<br>implied</td>
+            <td>Full economic need incl. resilience and growth — engineers' society</td>
+          </tr>
+          <tr>
+            <td><strong>AWWA <em>Beyond the Replacement Era</em></strong><br><span style="color:var(--muted);font-size:13px">Mar 2026</span></td>
+            <td>$2.1–2.4tn / 25yr<br>drinking water only</td><td class="n">$84–96bn</td>
+            <td>Replacement + PFAS + lead + climate + cyber + O&amp;M — utility trade body</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <p>The EPA surveys are <strong>floors by construction</strong>: they count only what states could
+    document as eligible, and their baseline assumes a 0.5%/year pipe replacement rate — which imputes a
+    <strong>200-year pipe life</strong> against an observed 53-year average failure age. The ASCE and AWWA
+    figures are <strong>ceilings by construction</strong>, produced by parties that advocate for higher
+    appropriations; AWWA's headline requires a 168% increase in annual capital investment and concedes
+    household bills would roughly double in real terms.</p>
+    <p>Escalate the two EPA surveys to 2026 dollars at ~4.5% construction inflation and you get
+    <strong>~$76bn/yr of documented eligible need</strong> against <strong>~$85–90bn/yr of actual
+    construction put in place</strong>. On a like-for-like basis the sector is roughly meeting its
+    documented need. It falls short only against the broader definitions.</p>
+
+    <h3>The IIJA cliff, in four steps</h3>
+    <ol>
+      <li><strong>Gross step-down: $8.7bn/yr.</strong> Annual SRF funding went from ~$2.7bn in FY2021 to
+      ~$11.4bn across FY2022–26 — 9.9% of the ~$88bn national base.</li>
+      <li><strong>The pipeline is not empty.</strong> Roughly two-thirds of the ~$50bn — some $33bn — had
+      still to reach municipalities as of mid-2026, spreading the drawdown across 2027–2030.</li>
+      <li><strong>A large share revolves.</strong> On a ~50/50 grant-versus-loan split, ~$25bn of permanent
+      corpus supports ~$2bn/yr of lending in perpetuity. Net steady-state loss: <strong>~$6.7bn/yr, or 7.6%
+      of the base</strong>.</li>
+      <li><strong>Rate growth swamps it.</strong> 5.1% on a far larger revenue base more than offsets the
+      federal withdrawal.</li>
+    </ol>
+  </div>
+
+  <div class="frame block">
+    <figure>
+      <div class="ftitle">US water capital spending, three scenarios</div>
+      <div class="fsub">$bn nominal · base $88bn (2026) · assumptions stated below</div>
+      <div class="chartwrap">
+        <svg id="scenarios" viewBox="0 0 860 360" role="img"
+             aria-label="Line chart of three scenarios for US water capital spending from 2026 to 2035. Base case rises from 88 to 127 billion dollars; bear case to 107 billion; bull case to 142 billion.">
+        </svg>
+        <div class="tip" id="tipS"></div>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--rust)"></i> Bear — growth 3.0%, drag $9bn, adders halved</span>
+        <span><i class="swatch" style="background:var(--water);height:4px"></i> Base — growth 4.5%, drag $6.7bn</span>
+        <span><i class="swatch" style="background:var(--sewer)"></i> Bull — growth 5.5%, drag $4bn, adders +10%</span>
+      </div>
+      <figcaption>Build-up: organic growth, less the phased IIJA drawdown (15% / 40% / 75% / 100% across
+      2027–30), plus incremental lead service line and PFAS spend. <strong>Roughly 3.5–5% nominal growth
+      through 2035 in the base case</strong>, with the federal drag worth ~1–1.5 percentage points of growth
+      in the 2029–30 window and nothing thereafter. The bear-to-bull spread of ~$35bn by 2035 (~32%) is the
+      honest measure of confidence — but no credible scenario has spending falling in nominal terms.</figcaption>
+    </figure>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>Base-case build-up · $bn nominal</caption>
+        <thead><tr>
+          <th>Year</th><th class="n">Organic</th><th class="n">IIJA drag</th><th class="n">Lead lines</th>
+          <th class="n">PFAS</th><th class="n">Total</th><th class="n">YoY</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>2027</td><td class="n">92.0</td><td class="n">−1.0</td><td class="n">2.0</td><td class="n">1.0</td><td class="n"><strong>94.0</strong></td><td class="n">+6.8%</td></tr>
+          <tr><td>2028</td><td class="n">96.1</td><td class="n">−2.7</td><td class="n">3.5</td><td class="n">1.8</td><td class="n"><strong>98.7</strong></td><td class="n">+5.1%</td></tr>
+          <tr><td>2029</td><td class="n">100.4</td><td class="n">−5.0</td><td class="n">5.0</td><td class="n">2.5</td><td class="n"><strong>102.9</strong></td><td class="n">+4.2%</td></tr>
+          <tr><td>2030</td><td class="n">104.9</td><td class="n">−6.7</td><td class="n">5.5</td><td class="n">2.5</td><td class="n"><strong>106.2</strong></td><td class="n">+3.2%</td></tr>
+          <tr><td>2031</td><td class="n">109.7</td><td class="n">−6.7</td><td class="n">5.5</td><td class="n">2.0</td><td class="n"><strong>110.5</strong></td><td class="n">+4.0%</td></tr>
+          <tr><td>2032</td><td class="n">114.6</td><td class="n">−6.7</td><td class="n">5.0</td><td class="n">1.5</td><td class="n"><strong>114.4</strong></td><td class="n">+3.6%</td></tr>
+          <tr><td>2033</td><td class="n">119.8</td><td class="n">−6.7</td><td class="n">4.5</td><td class="n">1.2</td><td class="n"><strong>118.8</strong></td><td class="n">+3.8%</td></tr>
+          <tr><td>2034</td><td class="n">125.1</td><td class="n">−6.7</td><td class="n">3.5</td><td class="n">1.0</td><td class="n"><strong>122.9</strong></td><td class="n">+3.5%</td></tr>
+          <tr><td>2035</td><td class="n">130.8</td><td class="n">−6.7</td><td class="n">2.0</td><td class="n">1.0</td><td class="n"><strong>127.1</strong></td><td class="n">+3.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <h3>The two line items that are legally, not economically, driven</h3>
+    <p>These carry the highest conviction because they are court-enforced deadlines rather than budget
+    preferences.</p>
+    <h4>Lead service lines</h4>
+    <p><strong>9.2 million lines</strong> at $4,700–$6,930 each on EPA's estimate — a national total of
+    $45–60bn on consensus figures, against $15bn of dedicated IIJA funding. Inventories, replacement plans
+    and school lists are due <strong>1 November 2027</strong>; full replacement is mandated within ten
+    years <em>regardless of measured lead levels</em>. The binary risk: <strong>AWWA v. EPA</strong>, with
+    oral argument expected in autumn 2026, challenging replacement of lines "under the control" of the utility.</p>
+    <h4>PFAS</h4>
+    <p>EPA's 18 May 2026 proposal <strong>retains PFOA and PFOS at 4 ppt</strong> but would let systems
+    request an extension to <strong>26 April 2031</strong>, and would <strong>rescind the MCLs for PFHxS,
+    PFNA, GenX and the Hazard Index</strong> on legal and procedural grounds rather than on the health
+    science. Sector cost remains &gt;$50bn over 20 years, but the opportunity is smaller and later than the
+    2024 rule implied. Any model built on the full six-compound rule is stale.</p>
+  </div>
+</section>
+
+<!-- ================= PART 3 ================= -->
+<section class="part" id="p3">
+  <div class="frame">
+    <div class="part-head">
+      <div class="part-num">03</div>
+      <div>
+        <h2>Why it actually needs replacing</h2>
+        <p class="part-sub">The engineering case, the counter-evidence, and an honest verdict on both.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <p>The US operates <strong>~2.2 million miles</strong> of drinking water transmission and distribution
+    main across ~50,000 community water systems, plus <strong>800,000+ miles</strong> of public sewer and
+    17,544 publicly owned treatment works serving 82% of the population. Water mains have an
+    <strong>observed average failure age of 53 years</strong>; treatment plants have a 40–50 year design
+    life, meaning the enormous 1972 Clean Water Act cohort is now at end of life. Plants run at an average
+    <strong>81% of design capacity, with 15% at or over</strong>.</p>
+    <p>Pipe went in the ground in three waves — turn-of-the-century cast iron, post-war cast iron and
+    asbestos cement, then 1970s–80s ductile iron and PVC. Each hits its replacement window in sequence,
+    which is the structural reason renewal spend compounds rather than spikes.</p>
+    <h3>Materials do not fail equally</h3>
+    <p>This is where "aging infrastructure" stops being a slogan. Failure rates differ by an order of
+    magnitude, and the difference is the defensible core of the replacement thesis.</p>
+  </div>
+
+  <div class="frame block">
+    <figure>
+      <div class="ftitle">Water main break rate by pipe material</div>
+      <div class="fsub">Breaks per 100 miles per year · Utah State University, 2023 · ~400,000 miles surveyed</div>
+      <div class="chartwrap">
+        <svg id="breaks" viewBox="0 0 860 300" role="img"
+             aria-label="Horizontal bar chart of annual water main break rates per 100 miles. Cast iron 28.6, asbestos cement 10.3, steel 9.2, ductile iron 5.1, PVC 2.9, national average 11.1.">
+        </svg>
+        <div class="tip" id="tipB"></div>
+      </div>
+      <figcaption><strong>Cast iron fails at roughly ten times the rate of PVC</strong> — and 86% of
+      installed cast iron is now over 50 years old, alongside 41% of asbestos cement. Together the two
+      materials account for 33% of the network (~770,000 miles).</figcaption>
+    </figure>
+  </div>
+
+  <div class="frame prose">
+    <h4>Why cast iron fails: graphitic corrosion</h4>
+    <p>Grey cast iron is an iron matrix laced with graphite flakes. Buried in soil, an electrochemical cell
+    forms between the <strong>cathodic graphite and the anodic iron matrix</strong>. The iron leaches away;
+    the graphite skeleton remains, preserving the pipe's shape while hollowing out its strength.</p>
+    <blockquote>The pipe <em>looks</em> intact. It holds its geometry and holds pressure — until a ground
+    movement, pressure transient, freeze cycle or traffic load applies what the graphitised wall can no
+    longer carry, and it fails catastrophically and without warning.</blockquote>
+    <p>Sulfate soils, de-icing chlorides, sulfate-reducing bacteria and soft water all accelerate it.
+    <strong>Soil corrosivity, not calendar age, is the dominant predictor</strong> — which is why identical-
+    vintage mains in different soils have wildly different histories, and why blanket age-based replacement
+    is economically inefficient.</p>
+    <h4>The second problem: tuberculation</h4>
+    <p>Bacteria interacting with the iron wall build rough iron-oxide tubercles inside the pipe. Effective
+    diameter shrinks, raising pumping costs and cutting fire-flow capacity sometimes below code; biofilm
+    harbours in the tubercles and consumes disinfectant residual; and under-deposit corrosion continues
+    beneath. <strong>A main can be hydraulically obsolete long before it is structurally unsafe</strong> —
+    which is a genuine, under-discussed reason utilities replace pipe that has never broken.</p>
+  </div>
+
+  <div class="frame block">
+    <div class="verdict counter">
+      <div class="lab">The evidence that cuts against the consensus</div>
+      <p>Presented in full, because the request was for unbiased information — and this case is stronger
+      than the industry generally acknowledges.</p>
+    </div>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>Four counter-arguments, and how much weight each carries</caption>
+        <thead><tr><th>Claim</th><th>Evidence</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>The network is getting <em>more</em> reliable, not less</strong></td>
+            <td>National break rate fell from <strong>14.0 to 11.1 per 100 miles</strong> between 2018 and
+            2023 — a ~20% decline — as cast iron and asbestos cement fell from 41% to 33% of installed mains.
+            Same study as the $452bn shortfall headline.</td>
+            <td><span class="pill ok">Strong</span></td>
+          </tr>
+          <tr>
+            <td><strong>Demand is falling, so capacity need is not growing</strong></td>
+            <td>Per capita withdrawal fell from ~140 to ~127 gpcd (2000–2020); public-supply domestic use
+            from 88 to 82 gpd (2010–15); total withdrawals −9% 2010–15 even as population grew. — USGS</td>
+            <td><span class="pill ok">Strong</span></td>
+          </tr>
+          <tr>
+            <td><strong>The needs surveys are biased instruments</strong></td>
+            <td>GAO found the CWSRF runs on a <strong>1987 formula</strong>; EPA's own Inspector General
+            found the 7th DWINSA's lead allotments did not reflect actual state needs; states self-report
+            into a survey that sets their own funding. EPA also concedes distribution needs are undercounted.</td>
+            <td><span class="pill ok">Strong — but cuts both ways</span></td>
+          </tr>
+          <tr>
+            <td><strong>"Run to failure" is sometimes correct</strong></td>
+            <td>For small-diameter mains in benign soils, reactive repair has a lower lifecycle cost than
+            proactive replacement. Condition-based programmes typically replace <em>less</em> pipe, more
+            effectively.</td>
+            <td><span class="pill hi">Real, but bounded</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <div class="verdict block">
+      <div class="lab">Verdict</div>
+      <p>The US does not need to replace 2.2 million miles of pipe. It needs to replace the
+      <strong>~770,000 miles over 50 years old</strong>, prioritised by material and soil corrosivity — and
+      it is doing so at roughly half the required pace <em>for that subset</em>. The replacement case is
+      real, but narrower and slower than the advocacy figures suggest, and through 2030 it is
+      <strong>regulation-driven rather than failure-driven</strong>. Corroding pipe is a deferrable expense.
+      A consent decree is not.</p>
+    </div>
+    <h4>The genuinely new variable</h4>
+    <p>US data centre water consumption of 17–19 billion gallons a year is projected to reach
+    <strong>60–110 billion by 2030</strong>, and <strong>97% of it comes from municipal systems</strong>.
+    The infrastructure consequence matters more than the volume: water systems are sized on population
+    growth, and a single hyperscale campus can exceed its host utility's entire planned growth allowance —
+    forcing transmission upsizing, storage, pumping and often dedicated treatment. Three announcements in
+    February 2026 alone carried water infrastructure costs approaching $1bn. The politics are a live risk,
+    since those costs usually land on residential ratepayers rather than the developer.</p>
+  </div>
+</section>
+
+<!-- ================= PART 4 ================= -->
+<section class="part" id="p4">
+  <div class="frame">
+    <div class="part-head">
+      <div class="part-num">04</div>
+      <div>
+        <h2>Core &amp; Main and Ferguson</h2>
+        <p class="part-sub">Two very different ways to own the same theme. All company data sourced from Quartr.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>Side by side · latest reported</caption>
+        <thead><tr><th>&nbsp;</th><th>Core &amp; Main (CNM)</th><th>Ferguson (FERG)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Latest FY revenue</strong></td>
+              <td class="n">$7,647m <span style="color:var(--muted)">FY to 1 Feb 2026, +2.8%</span></td>
+              <td class="n">$31,316m <span style="color:var(--muted)">calendar 2025, +5.0%</span></td></tr>
+          <tr><td><strong>Latest quarter</strong></td>
+              <td class="n">$1,911m — flat <span style="color:var(--muted)">Q1 to 3 May 2026</span></td>
+              <td class="n">$8,751m — +4.6% <span style="color:var(--muted)">Q2 to 30 Jun 2026</span></td></tr>
+          <tr><td><strong>Profitability</strong></td>
+              <td class="n">Adj. EBITDA $931m · <strong>12.2%</strong></td>
+              <td class="n">Adj. op. profit $932m · <strong>10.7%</strong></td></tr>
+          <tr><td><strong>Water exposure</strong></td>
+              <td><strong>100% of revenue</strong> — water, wastewater, storm, fire</td>
+              <td><strong>Waterworks = 24% of US net sales</strong> (Q2 CY26)</td></tr>
+          <tr><td><strong>Est. waterworks revenue</strong></td>
+              <td class="n">$7.6bn</td>
+              <td class="n">~$6.5–7.1bn <span class="pill hi">estimated</span></td></tr>
+          <tr><td><strong>Municipal exposure</strong></td>
+              <td class="n">44% of sales ≈ $3.37bn</td>
+              <td>Not disclosed separately</td></tr>
+          <tr><td><strong>Repair &amp; replace vs new</strong></td>
+              <td class="n">50 / 50</td><td>Not disclosed</td></tr>
+          <tr><td><strong>Stated position</strong></td>
+              <td><strong>20% of a $39bn US TAM</strong>; 370+ branches</td>
+              <td>Largest US distributor; TAM to $400bn post-FloWorks</td></tr>
+          <tr><td><strong>Guidance</strong></td>
+              <td>FY26 $7.8–7.9bn (+2–3%); adj. EBITDA $950–980m</td>
+              <td>CY26 mid-single-digit growth (raised); margin 9.5–9.8%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <p>Together the two are <strong>$14.2–14.8bn against the $39bn US TAM Core &amp; Main cites — a combined
+    36–38% share</strong> of a market both describe as fragmented. That is a duopoly at the head of a long
+    tail, and it is why both have been able to consolidate and hold pricing. It also cross-checks: 20% of
+    $39bn is $7.8bn, against CNM's reported $7.65bn.</p>
+
+    <div class="verdict block">
+      <div class="lab">The sensitivity most investors get wrong</div>
+      <p>A <strong>100bp change in municipal market growth</strong> is worth $34m of revenue to Core &amp;
+      Main — <strong>0.44% of total net sales</strong>, about $4m of EBITDA — and $71m to Ferguson, or
+      <strong>0.23% of group revenue</strong>. Even at full effect the IIJA drawdown is worth well under a
+      percentage point of revenue growth to either company. <strong>Residential construction — 18% of CNM's
+      mix and about half of Ferguson's US mix — moves both far more.</strong></p>
+    </div>
+
+    <h3>What management says, and whether it checks out</h3>
+    <p>Core &amp; Main was asked directly on 10 June 2026. The answer is the most specific public account of
+    where the IIJA money physically sits.</p>
+    <blockquote>"On IIJA, the remaining funding is expected to hit the state revolving funds this year. That
+    doesn't mean that there's any cliff to the funding or there's any end to the funding… <strong>Only about
+    a third or less of it has hit the municipality level yet.</strong> … A portion of that funding is in the
+    grant form, and then the other portion is in low interest loans. A portion of that would get repaid back
+    into those state revolving funds."
+    <cite>Brad Cowles, President, Core &amp; Main — Q1 FY2026 earnings call</cite></blockquote>
+    <blockquote>"95% of the funding that municipalities use for their water infrastructure is state and
+    local… We're seeing municipalities increase water rates to their customers to be able to afford some of
+    the upgrades. We're seeing municipal bond growth and the municipal bond issuance that's going out there."
+    <cite>Robyn Bradbury, CFO, Core &amp; Main — Q1 FY2026 earnings call</cite></blockquote>
+    <p>Both claims verify independently — CBO puts the state and local share at 92–96%, and Bluefield
+    measures 2025 rate growth at 5.1%. This is the rare case where management commentary and third-party
+    data agree, which raises the confidence weighting.</p>
+
+    <h3>Neither is growing at the market rate</h3>
+    <p>Both are growing <em>within</em> the market by moving into more technical categories. Core &amp;
+    Main's <strong>treatment plant</strong> and <strong>smart utility / AMI</strong> lines have compounded at
+    15–25% over five years, against low-single-digit growth for the whole business; treatment plant is a
+    mid-single-digit percentage of net sales and management calls it "non-discretionary… a pretty durable
+    long-term trend." Ferguson is playing the same demand pool through <strong>large capital
+    projects</strong> — mid- to high-single-digit percentage of revenue and trending up, with backlogs
+    building above realised growth rates including waterworks, and the $1.6bn FloWorks acquisition
+    explicitly justified on cross-selling into waterworks, commercial/mechanical and industrial.</p>
+
+    <h4>One overlay that distorts the reported numbers</h4>
+    <p><strong>PVC deflation is currently masking municipal volume strength at both companies.</strong> Core
+    &amp; Main delivered flat revenue with +50bps of gross margin and +6% adjusted EPS — a volume-and-mix
+    story running underneath a price headwind. Ferguson reported PVC "down about in the double-digit range
+    for the quarter" with commodities ~15% of revenue. If announced resin-driven increases stick, reported
+    growth accelerates with no change in underlying demand. If they do not, the reverse.</p>
+  </div>
+
+  <div class="frame block">
+    <div class="scroll">
+      <table>
+        <caption>What to monitor · ranked by signal value</caption>
+        <thead><tr><th class="n">#</th><th>Indicator</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td><strong>Water &amp; sewer rate increases</strong></td><td>95% of the funding. Ran +5.1% in 2025. A deceleration here matters more than anything Congress does.</td></tr>
+          <tr><td class="n">2</td><td><strong>AWWA v. EPA</strong></td><td>Oral argument expected autumn 2026. The largest binary swing factor — an adverse ruling removes a multi-billion dollar annual programme.</td></tr>
+          <tr><td class="n">3</td><td><strong>WRDA 2026 → appropriations</strong></td><td>Would authorise $14bn/4yr CWSRF and $16.5bn/5yr DWSRF. The FY2027 House bill currently proposes a 16% SRF cut.</td></tr>
+          <tr><td class="n">4</td><td><strong>Census C30 construction put in place</strong></td><td>Monthly; leads distributor revenue by two to four quarters.</td></tr>
+          <tr><td class="n">5</td><td><strong>Municipal bond issuance</strong></td><td>The capital vehicle. Issuers deferred through the 2023–24 rate spike and have been returning.</td></tr>
+          <tr><td class="n">6</td><td><strong>PVC resin pricing</strong></td><td>Determines whether reported growth reflects volume or price.</td></tr>
+          <tr><td class="n">7</td><td><strong>Residential construction</strong></td><td>The actual drag on both companies today — and far larger than the federal funding question.</td></tr>
+          <tr><td class="n">8</td><td><strong>Data centre water announcements</strong></td><td>VA, TX, AZ, LA, IN — the genuinely new demand pool, though politically contested.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 5 ================= -->
+<section class="part" id="p5">
+  <div class="frame">
+    <div class="part-head">
+      <div class="part-num">05</div>
+      <div>
+        <h2>What would change this view</h2>
+        <p class="part-sub">Synthesis, and the caveats that belong on the front page rather than the last.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame prose">
+    <ul>
+      <li><strong>The market is mid-single-digit nominal growth</strong> — replacement-led, low-cyclicality,
+      regulation-anchored. It is not a boom and will not be one. Anyone underwriting a step-function
+      infrastructure cycle is relying on numbers that will not be spent.</li>
+      <li><strong>Core &amp; Main is the higher-beta pure play.</strong> 44% municipal, 100% water, 50%
+      repair-and-replace. Its FY26 guidance of +2–3% sits <em>below</em> the market growth the model implies,
+      which is a low bar if municipal strength persists and PVC pricing normalises.</li>
+      <li><strong>Ferguson is the diluted expression.</strong> Waterworks is ~23% of group revenue and
+      decelerated to +3% on a +15% comparable. A feature if you want the infrastructure theme without
+      municipal-budget risk; a bug if you want a clean water proxy.</li>
+      <li><strong>The durable earnings driver is consolidation</strong>, not the market's growth rate — M&amp;A
+      and category expansion into treatment and metering, from a combined 36–38% share of a fragmented market.</li>
+    </ul>
+
+    <div class="verdict counter block">
+      <div class="lab">Caveats that matter</div>
+      <p><strong>Verify the public-sector figures against primary documents before relying on them.</strong>
+      This analysis was assembled under network restrictions that blocked direct retrieval from cbo.gov,
+      epa.gov, census.gov and fred.stlouisfed.org, so those numbers came via search results summarising
+      the primary sources rather than from the source PDFs. Company financials do not carry this caveat —
+      they came from Quartr's primary filings and transcripts.</p>
+    </div>
+
+    <p>Other known soft spots: Ferguson's waterworks revenue is <strong>estimated</strong> from a
+    seasonally strong quarter applied to an annualised US base — Ferguson does not report it. The ~50/50
+    IIJA grant-versus-loan split driving the revolving offset is an <strong>assumption</strong>. The $88bn
+    base bundles Census categories that are not a clean match for municipal water and wastewater capital
+    spending; rebuilding that series from FRED is the highest-value next step. And the forward model is a
+    framework for bounding outcomes, not a forecast with a claim to precision — the ~32% bear-to-bull spread
+    by 2035 is the honest measure of confidence.</p>
+    <p>This contains no valuation, no price target and no recommendation. It sizes a market, models its
+    trajectory, and tests the engineering claims underneath it.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="frame">
+    <div><strong style="font-family:Archivo,sans-serif">Sources</strong></div>
+    <div>Congressional Budget Office · US Census Bureau (C30) · Congressional Research Service · EPA
+    (DWINSA, CWNS, WIFIA, LCRI, PFAS rulemaking) · EPA Office of Inspector General · GAO-24-106251 ·
+    USGS Water Use · ASCE 2025 Infrastructure Report Card and Bridging the Gap · AWWA <em>Beyond the
+    Replacement Era</em> and Black &amp; Veatch PFAS cost model · Utah State University Buried Structures
+    Laboratory · Bluefield Research · National League of Cities · Senate EPW (WRDA 2026).</div>
+    <div>Company financials, segment mix, guidance and management quotations sourced from
+    <strong>Quartr</strong> — primary earnings releases, investor presentations and call transcripts for
+    Core &amp; Main (Q1 FY2026, FY2025) and Ferguson Enterprises (Q2 CY2026, CY2025).</div>
+    <div style="opacity:.75">Each source carries its own interest — engineers' societies and utility trade
+    bodies advocate for higher appropriations; needs surveys double as allocation formulas; market research
+    is sold to vendors. Attributions are stated so the reader can discount accordingly.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const el = (t,a) => { const e=document.createElementNS(SVGNS,t);
+    for(const k in a) e.setAttribute(k,a[k]); return e; };
+
+  /* ---------- scenario lines ---------- */
+  const years=[2026,2027,2028,2029,2030,2031,2032,2033,2034,2035];
+  const series=[
+    {name:"Bear", key:"rust",  dash:"5 4", w:2,   v:[88.0,90.8,92.4,93.2,94.0,96.8,99.3,102.1,104.7,107.3]},
+    {name:"Base", key:"water", dash:"",    w:3.2, v:[88.0,94.0,98.7,102.9,106.2,110.5,114.4,118.8,122.9,127.1]},
+    {name:"Bull", key:"sewer", dash:"2 4", w:2,   v:[88.0,95.5,102.2,108.6,113.8,119.3,124.5,130.3,136.0,141.8]}
+  ];
+
+  function drawScenarios(){
+    const svg=document.getElementById("scenarios");
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const W=860,H=360,L=48,R=74,T=18,B=38;
+    const x=i=>L+i*((W-L-R)/(years.length-1));
+    const y=v=>T+(150-v)*((H-T-B)/(150-80));
+    const grid=css("--grid"), muted=css("--muted");
+
+    for(let v=80;v<=150;v+=10){
+      svg.appendChild(el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:grid,"stroke-width":1}));
+      const t=el("text",{x:L-9,y:y(v)+3.5,"text-anchor":"end",class:"axis"}); t.textContent=v; svg.appendChild(t);
+    }
+    years.forEach((yr,i)=>{
+      if(i%2===0||i===years.length-1){
+        const t=el("text",{x:x(i),y:H-14,"text-anchor":"middle",class:"axis"}); t.textContent=yr; svg.appendChild(t);
+      }
+    });
+
+    series.forEach(s=>{
+      const c=css("--"+s.key);
+      const d=s.v.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+      svg.appendChild(el("path",{d,fill:"none",stroke:c,"stroke-width":s.w,"stroke-dasharray":s.dash,
+        "stroke-linecap":"round","stroke-linejoin":"round"}));
+      // endpoint marker with surface ring
+      const i=s.v.length-1;
+      svg.appendChild(el("circle",{cx:x(i),cy:y(s.v[i]),r:5,fill:c,stroke:css("--surface"),"stroke-width":2}));
+      const lab=el("text",{x:x(i)+11,y:y(s.v[i])+4,class:"vlabel",fill:c});
+      lab.textContent=s.name+" "+s.v[i].toFixed(0); svg.appendChild(lab);
+    });
+
+    // hover crosshair
+    const line=el("line",{y1:T,y2:H-B,stroke:muted,"stroke-width":1,"stroke-dasharray":"3 3",opacity:0});
+    svg.appendChild(line);
+    const tip=document.getElementById("tipS"), wrap=svg.parentElement;
+    svg.addEventListener("pointermove",e=>{
+      const r=svg.getBoundingClientRect(), sx=(e.clientX-r.left)*(W/r.width);
+      let i=Math.round((sx-L)/((W-L-R)/(years.length-1)));
+      i=Math.max(0,Math.min(years.length-1,i));
+      line.setAttribute("x1",x(i)); line.setAttribute("x2",x(i)); line.setAttribute("opacity",.9);
+      tip.style.opacity=1;
+      tip.style.left=(x(i)/W*r.width)+"px";
+      tip.style.top=(y(series[1].v[i])/H*r.height)+"px";
+      tip.innerHTML="<b>"+years[i]+"</b> &nbsp; "+series.map(s=>s.name+" $"+s.v[i].toFixed(1)+"bn").join(" · ");
+    });
+    svg.addEventListener("pointerleave",()=>{line.setAttribute("opacity",0);tip.style.opacity=0;});
+  }
+
+  /* ---------- break rates ---------- */
+  const mats=[
+    {n:"Cast iron",       v:28.6, hi:true},
+    {n:"National average",v:11.1, avg:true},
+    {n:"Asbestos cement", v:10.3},
+    {n:"Steel",           v:9.2},
+    {n:"Ductile iron",    v:5.1},
+    {n:"PVC",             v:2.9}
+  ];
+  function drawBreaks(){
+    const svg=document.getElementById("breaks");
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const W=860,H=300,L=160,R=64,T=10,B=16;
+    const rowH=(H-T-B)/mats.length, barH=Math.min(26,rowH-14);
+    const max=30, x=v=>L+v*((W-L-R)/max);
+    const water=css("--water"), rust=css("--rust"), muted=css("--muted"), surf=css("--surface");
+    const tip=document.getElementById("tipB");
+
+    for(let v=0;v<=30;v+=10){
+      svg.appendChild(el("line",{x1:x(v),x2:x(v),y1:T,y2:H-B,stroke:css("--grid"),"stroke-width":1}));
+      const t=el("text",{x:x(v),y:H-3,"text-anchor":"middle",class:"axis"}); t.textContent=v; svg.appendChild(t);
+    }
+
+    mats.forEach((m,i)=>{
+      const cy=T+i*rowH+rowH/2, c=m.hi?rust:water, op=m.avg?.45:1;
+      const lab=el("text",{x:L-14,y:cy+4.5,"text-anchor":"end",class:"matlabel"});
+      lab.textContent=m.n; if(m.hi) lab.setAttribute("fill",rust);
+      svg.appendChild(lab);
+      const bar=el("rect",{x:L,y:cy-barH/2,width:Math.max(2,x(m.v)-L),height:barH,rx:4,fill:c,opacity:op,
+        stroke:surf,"stroke-width":2});
+      svg.appendChild(bar);
+      const val=el("text",{x:x(m.v)+11,y:cy+4.5,class:"vlabel"});
+      val.textContent=m.v.toFixed(1); if(m.hi) val.setAttribute("fill",rust); svg.appendChild(val);
+
+      bar.addEventListener("pointerenter",e=>{
+        const r=svg.getBoundingClientRect();
+        tip.style.opacity=1;
+        tip.style.left=((x(m.v)+L)/2/W*r.width)+"px";
+        tip.style.top=(cy/H*r.height)+"px";
+        tip.innerHTML="<b>"+m.n+"</b> &nbsp; "+m.v.toFixed(1)+" breaks / 100 mi / yr";
+      });
+      bar.addEventListener("pointerleave",()=>{tip.style.opacity=0;});
+    });
+    const note=el("text",{x:W-R+6,y:H-3,"text-anchor":"start",class:"axis",fill:muted});
+    note.textContent="breaks / 100 mi / yr"; svg.appendChild(note);
+  }
+
+  function render(){ drawScenarios(); drawBreaks(); }
+  render();
+  if(window.matchMedia){
+    const mq=window.matchMedia("(prefers-color-scheme: dark)");
+    (mq.addEventListener?mq.addEventListener.bind(mq,"change"):mq.addListener.bind(mq))(render);
+  }
+  new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>

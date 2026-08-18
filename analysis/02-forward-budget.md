@@ -136,11 +136,11 @@ surveys' escalated floor and the ASCE/AWWA ceiling.
 
 | Scenario | Change to assumptions | 2030 total | 2035 total |
 | --- | --- | --- | --- |
-| **Bear** — SRF cut 16% and sustained, no WRDA reauthorisation, rates flatten to 3% | growth 3.0%, drag $9bn | ~$97bn | ~$110bn |
-| **Base** — as modelled | 4.5% growth, $6.7bn drag | **$106bn** | **$127bn** |
-| **Bull** — WRDA 2026 appropriated in full, LCRI upheld in litigation, rates hold 5.5% | growth 5.5%, drag $4bn | ~$114bn | ~$146bn |
+| **Bear** — SRF cut 16% and sustained, no WRDA reauthorisation, rates flatten to 3%, LCRI struck down in part | growth 3.0%, drag $9bn, regulatory adders halved | **$94bn** | **$107bn** |
+| **Base** — as modelled | growth 4.5%, drag $6.7bn | **$106bn** | **$127bn** |
+| **Bull** — WRDA 2026 appropriated in full, LCRI upheld, rates hold 5.5% | growth 5.5%, drag $4bn, adders +10% | **$114bn** | **$142bn** |
 
-The spread between bear and bull by 2035 is about **$36bn/yr, or ~30%** — material, but the
+The spread between bear and bull by 2035 is about **$35bn/yr, or ~32%** — material, but the
 *direction* is up in every case. There is no credible scenario in which national water
 capital spending declines in nominal terms.
 
