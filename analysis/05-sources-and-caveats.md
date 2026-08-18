@@ -78,9 +78,13 @@ transcripts:
 ## 5.2 Caveats on this analysis
 
 **Data access.** This session's network egress permitted web search but blocked direct
-retrieval from cbo.gov, epa.gov, census.gov, fred.stlouisfed.org and
-infrastructurereportcard.org. Public-sector figures were therefore obtained through search
-results summarising those primary documents rather than by reading the source PDFs directly.
+retrieval from every external host tested — cbo.gov, epa.gov, census.gov, congress.gov,
+everycrsreport.com, fred.stlouisfed.org, infrastructurereportcard.org, digitalcommons.usu.edu,
+tradingeconomics.com and even wikipedia.org. Direct access was retried and remains blocked;
+the environment's egress policy is a tight allowlist covering package registries, GitHub and
+Anthropic only, and the proxy README instructs that policy denials be reported rather than
+routed around. Public-sector figures were therefore obtained through search results
+summarising those primary documents rather than by reading the source PDFs directly.
 Figures are attributed to the correct primary source, but **each headline number should be
 verified against the primary document before it is relied upon for an investment decision.**
 Company financials do not carry this caveat — they came from Quartr's primary filings.
@@ -88,22 +92,27 @@ Company financials do not carry this caveat — they came from Quartr's primary 
 **Where a continuous annual time series is missing.** The Census C30 water supply and
 sewage/waste disposal series is quoted at the January 2026 seasonally adjusted annual rate
 rather than as a full annual series, because the underlying data files were not retrievable.
-The multi-year trend is therefore inferred from the US Conference of Mayors' cumulative
-2012–2024 figures and from Bluefield's forecast growth rates. **Rebuilding this series from
-FRED (`TLWSCON`, `TLSWDCON`, `PBWSCONS`, `PBSWGCONS`) is the highest-value next step** and
-would materially firm up the base of the model in §2.5.
+The multi-year trend is inferred from the US Conference of Mayors' cumulative 2012–2024
+figures and from Bluefield's forecast growth rates. This matters less than it did in the
+first draft: the model base is now anchored on CBO's water utilities **capital** line ($59bn,
+2023) and cross-checked three other ways, rather than on the Census series. Rebuilding the
+monthly series from FRED (`TLWSCON`, `TLSWDCON`, `PBWSCONS`, `PBSWGCONS`) would still improve
+the trend picture and remains the highest-value next step.
 
 **Estimated versus reported figures.** Clearly flagged throughout. In particular:
 - Ferguson's waterworks revenue (~$6.5–7.1bn) is **estimated**, from a Q2 disclosure applied
   to an annualised US revenue base. Ferguson does not report it.
 - The IIJA grant-versus-loan split (~50/50) driving the $2bn/yr revolving offset is an
   **assumption**, not a disclosure.
-- The $88bn base in the forward model bundles Census categories that are not a clean match
-  for "municipal water and wastewater capital spending."
+- The **$68bn base** in the forward model is a reconciliation of four sources, not a single
+  reported figure. The sewerage share of the Census "sewage and waste disposal" category
+  (65%) and the public share (95%) are both assumptions. An earlier draft used $88bn — the
+  naive Census sum — which overstated the base by ~30% and correspondingly understated both
+  the IIJA drag and the documented funding gap.
 
 **Model construction.** The build-up in §2.5 is deliberately simple and every assumption is
 stated so each can be replaced. It is a framework for bounding outcomes, not a forecast with
-a claim to precision. The bear-to-bull spread of ~30% by 2035 is the honest measure of
+a claim to precision. The bear-to-bull spread of ~35% by 2035 is the honest measure of
 confidence.
 
 **Fiscal year labelling.** Core & Main's fiscal year ends on the Sunday nearest 31 January;

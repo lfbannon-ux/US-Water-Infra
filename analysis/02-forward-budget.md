@@ -13,7 +13,7 @@ thing, which is why the range is so wide.
 | --- | --- | --- | --- | --- |
 | **EPA 7th DWINSA** | Sep 2023 | $625bn / 20yr (Jan-2021 $); $648.8bn in 2022 $ | **$31.3bn/yr** | *SRF-eligible* drinking water capital projects reported by states |
 | **EPA CWNS 2022** | Apr 2024 | $630.1bn / 20yr | **$31.5bn/yr** | *SRF-eligible* clean water capital needs with documentation |
-| **ASCE Bridging the Gap** | 2024 | $99bn/yr *gap* (up from $81bn in 2021) | implies **~$187bn/yr required** | Full economic need incl. resilience, service quality, growth |
+| **ASCE Bridging the Gap** | 2024 | $99bn/yr *gap* (up from $81bn in 2021) | implies **~$167bn/yr required** | Full economic need incl. resilience, service quality, growth |
 | **AWWA *Beyond the Replacement Era*** | Mar 2026 | $2.1–2.4tn / 25yr, drinking water **only** (2025 $) | **$84–96bn/yr** | Asset replacement **plus** PFAS, LSL, climate resilience, cyber, rising O&M |
 
 ### The reconciliation
@@ -23,15 +23,21 @@ thing, which is why the range is so wide.
   transmission and distribution systems because many systems do not have a plan in place for
   replacing pipes." The DWINSA baseline assumes a **0.5%/year pipe replacement rate — which
   imputes a 200-year pipe life**, roughly four times the observed 53-year average failure age.
+> **A caution on the $99bn.** ASCE uses the same headline number two different ways: *Bridging
+> the Gap* reports a **$99bn/yr investment gap for the whole water sector**, while the 2025
+> Report Card reports **$99bn/yr of wastewater-and-stormwater capital needs** against a $69bn
+> gap. They are not the same quantity. Route 3 of the base reconciliation below uses the
+> latter; this table uses the former.
+
 - **The ASCE and AWWA numbers are ceilings, also by construction.** They are produced by an
   engineers' professional society and a utility trade association respectively, both of
   which advocate for higher appropriations. AWWA's headline requires a **168% increase in
   annual capital investment** and concedes household bills would roughly double in real terms.
 - **The truth is bracketed, not split.** Escalating the two EPA surveys to 2026 dollars at
-  ~4.5%/yr construction inflation gives **~$76bn/yr of documented, eligible capital need**.
-  Actual water-related construction put in place is running at **~$85–90bn/yr**. On a
-  like-for-like basis the sector is roughly *meeting* its documented eligible need — and
-  falling far short only against the broader definitions.
+  ~4.5%/yr construction inflation gives **~$76.5bn/yr of documented, eligible capital need**
+  against actual national water capital spending of **~$68bn/yr** (derived in §2.2 below).
+  That is a real but modest shortfall of **~$8.5bn/yr, about 12%** — an order of magnitude
+  below the ASCE headline.
 
 **The honest framing for an investor: there is no cliff-edge deficit, there is a slow
 compounding one.** The market grows because rates rise and mandates bind, not because a
@@ -39,7 +45,46 @@ $99bn/year gap is about to be closed.
 
 ---
 
-## 2.2 The market-research view (the one that maps to distributor revenue)
+## 2.2 Sizing the actual capital base — four routes to the same number
+
+Most commentary on this sector, including an earlier draft of this analysis, uses the Census
+construction-put-in-place series as the capital base. **That is wrong, and it overstates the
+base by roughly 30%.** Census "sewage and waste disposal" bundles solid-waste facilities
+(landfill, waste-to-energy) with sewerage, and the series counts private as well as public
+work. Naively summing water supply plus sewage and waste disposal gives ~$91bn; the true
+water and wastewater capital figure is materially lower.
+
+Four independent routes converge:
+
+| Route | Derivation | Result |
+| --- | --- | --- |
+| **1. CBO, direct** | Water utilities capital spending was **$59bn in 2023** (against $114bn of O&M, $175bn total). Escalated at 4.5%/yr to 2026. | **$67.3bn** |
+| **2. Census, adjusted** | Water supply $36.5bn + ~65% of sewage and waste disposal $54.3bn, taking the public share (~95%). | **$68.2bn** |
+| **3. ASCE, implied** | Wastewater and stormwater capital needs $99bn/yr with a $69bn gap → ~30% met → ~$30bn/yr actually spent. | *(part)* |
+| **4. AWWA, implied** | Drinking water target of $84–96bn/yr requires a "168% increase", so current spend is target ÷ 2.68 → $31–36bn/yr. | *(part)* |
+| **3 + 4 combined** | Wastewater/stormwater + drinking water | **$61–66bn** |
+| **Adopted** | Average of routes 1, 2 and 3+4 | **~$68bn** |
+
+Three methodologically unrelated sources — a non-partisan scorekeeper, official construction
+statistics, and two advocacy studies read backwards through their own "increase required"
+claims — land within a few billion dollars of each other. **The 2026 national water and
+wastewater capital base is ~$68bn.** That is the figure used throughout the model below.
+
+This correction matters, and it cuts against the conclusion an inflated base would give:
+
+| | On a $88bn base | On the correct $68bn base |
+| --- | --- | --- |
+| IIJA gross step-down as % of base | 9.9% | **12.8%** |
+| IIJA net drag as % of base | 7.6% | **9.9%** |
+| Documented need vs actual spend | roughly in balance | **~12% shortfall** |
+
+The federal cliff is proportionally *larger* than the inflated base suggested, and there is a
+real documented funding gap. Both conclusions are more bearish than the earlier arithmetic —
+which is why the reconciliation is worth doing rather than assuming.
+
+---
+
+## 2.3 The market-research view (the one that maps to distributor revenue)
 
 Bluefield Research's forecasts are the closest to a bottom-up, project-pipeline model:
 
@@ -58,7 +103,7 @@ distributor with a 50% repair-and-replace revenue base wants.
 
 ---
 
-## 2.3 The federal picture through 2027
+## 2.4 The federal picture through 2027
 
 | Item | Status as of August 2026 |
 | --- | --- |
@@ -77,14 +122,14 @@ run-rate. Authorisation levels are also routinely under-appropriated.
 
 ---
 
-## 2.4 The IIJA cliff arithmetic, done honestly
+## 2.5 The IIJA cliff arithmetic, done honestly
 
 This is the single most-asked question about CNM and FERG, and most commentary gets the
 magnitude wrong in both directions.
 
 **Step 1 — the gross federal step-down.** Per the National League of Cities, IIJA took
 annual SRF funding from **~$2.7bn (FY2021) to ~$11.4bn (FY2022–26)**. Gross step-down:
-**$8.7bn/year** — 9.9% of the ~$88bn national water construction base.
+**$8.7bn/year** — **12.8%** of the $68bn national water capital base.
 
 **Step 2 — the pipeline is not empty.** Core & Main's President, on the 10 June 2026
 earnings call: *"the remaining funding is expected to hit the state revolving funds this
@@ -96,7 +141,7 @@ $33bn — is still to be disbursed**, spreading the drawdown across 2027–2030.
 predominantly loans; the LSL and emerging-contaminant pots carry high principal-forgiveness
 requirements. On a rough 50/50 grant-vs-loan split, ~$25bn of permanent corpus addition
 supports **~$2bn/year of ongoing lending in perpetuity**. Net steady-state loss:
-**~$6.7bn/year, or 7.6% of the base** — not 100% of the supplemental.
+**~$6.7bn/year, or 9.9% of the base** — not 100% of the supplemental.
 
 **Step 4 — the offset.** Rate growth of 5.1%/yr on a much larger revenue base swamps this.
 A single year of national rate increases generates more incremental utility capacity than
@@ -104,11 +149,11 @@ the entire annual IIJA water supplemental.
 
 ---
 
-## 2.5 Build-up model: national water capital spending, 2027–2035
+## 2.6 Build-up model: national water capital spending, 2027–2035
 
 Assumptions stated explicitly so each can be stress-tested:
 
-- **Base:** $88bn (2026 run-rate; Census C30 water supply + sewage/waste disposal, total construction, SAAR Jan-2026)
+- **Base:** $68bn (2026 national water and wastewater capital spending, reconciled in §2.2)
 - **Organic growth:** 4.5%/yr nominal (Bluefield treatment capex 4.4% CAGR; rate growth ~5%)
 - **IIJA drawdown:** net $6.7bn/yr at full effect, phased 15% / 40% / 75% / 100% across 2027–2030
 - **LSL adder:** incremental spend under the LCRI 10-year window, peaking ~$5.5bn/yr around 2030–31
@@ -116,15 +161,15 @@ Assumptions stated explicitly so each can be stress-tested:
 
 | Year | Organic | IIJA drag | LSL | PFAS | **Total ($bn)** | YoY |
 | --- | --- | --- | --- | --- | --- | --- |
-| 2027 | 92.0 | −1.0 | 2.0 | 1.0 | **94.0** | +6.8% |
-| 2028 | 96.1 | −2.7 | 3.5 | 1.8 | **98.7** | +5.1% |
-| 2029 | 100.4 | −5.0 | 5.0 | 2.5 | **102.9** | +4.2% |
-| 2030 | 104.9 | −6.7 | 5.5 | 2.5 | **106.2** | +3.2% |
-| 2031 | 109.7 | −6.7 | 5.5 | 2.0 | **110.5** | +4.0% |
-| 2032 | 114.6 | −6.7 | 5.0 | 1.5 | **114.4** | +3.6% |
-| 2033 | 119.8 | −6.7 | 4.5 | 1.2 | **118.8** | +3.8% |
-| 2034 | 125.1 | −6.7 | 3.5 | 1.0 | **122.9** | +3.5% |
-| 2035 | 130.8 | −6.7 | 2.0 | 1.0 | **127.1** | +3.4% |
+| 2027 | 71.1 | −1.0 | 2.0 | 1.0 | **73.1** | +7.5% |
+| 2028 | 74.3 | −2.7 | 3.5 | 1.8 | **76.9** | +5.2% |
+| 2029 | 77.6 | −5.0 | 5.0 | 2.5 | **80.1** | +4.2% |
+| 2030 | 81.1 | −6.7 | 5.5 | 2.5 | **82.4** | +2.9% |
+| 2031 | 84.7 | −6.7 | 5.5 | 2.0 | **85.5** | +3.8% |
+| 2032 | 88.6 | −6.7 | 5.0 | 1.5 | **88.4** | +3.4% |
+| 2033 | 92.5 | −6.7 | 4.5 | 1.2 | **91.5** | +3.5% |
+| 2034 | 96.7 | −6.7 | 3.5 | 1.0 | **94.5** | +3.3% |
+| 2035 | 101.1 | −6.7 | 2.0 | 1.0 | **97.4** | +3.1% |
 
 **Conclusion: roughly 3.5–5% nominal annual growth in national water capital spending
 through 2035, with the federal drawdown shaving ~1–1.5 percentage points off growth in the
@@ -136,17 +181,17 @@ surveys' escalated floor and the ASCE/AWWA ceiling.
 
 | Scenario | Change to assumptions | 2030 total | 2035 total |
 | --- | --- | --- | --- |
-| **Bear** — SRF cut 16% and sustained, no WRDA reauthorisation, rates flatten to 3%, LCRI struck down in part | growth 3.0%, drag $9bn, regulatory adders halved | **$94bn** | **$107bn** |
-| **Base** — as modelled | growth 4.5%, drag $6.7bn | **$106bn** | **$127bn** |
-| **Bull** — WRDA 2026 appropriated in full, LCRI upheld, rates hold 5.5% | growth 5.5%, drag $4bn, adders +10% | **$114bn** | **$142bn** |
+| **Bear** — SRF cut 16% and sustained, no WRDA reauthorisation, rates flatten to 3%, LCRI struck down in part | growth 3.0%, drag $9bn, regulatory adders halved | **$71.5bn** | **$81.2bn** |
+| **Base** — as modelled | growth 4.5%, drag $6.7bn | **$82.4bn** | **$97.4bn** |
+| **Bull** — WRDA 2026 appropriated in full, LCRI upheld, rates hold 5.5% | growth 5.5%, drag $4bn, adders +10% | **$89.0bn** | **$109.4bn** |
 
-The spread between bear and bull by 2035 is about **$35bn/yr, or ~32%** — material, but the
+The spread between bear and bull by 2035 is about **$28bn/yr, or ~35%** — material, but the
 *direction* is up in every case. There is no credible scenario in which national water
 capital spending declines in nominal terms.
 
 ---
 
-## 2.6 The two regulatory line items that are legally, not economically, driven
+## 2.7 The two regulatory line items that are legally, not economically, driven
 
 These are the highest-conviction components of the forecast because they are court-enforced
 deadlines rather than budget preferences.
@@ -187,18 +232,18 @@ full 2024 six-compound rule as stale.
 
 ---
 
-## 2.7 What this means for the distributors
+## 2.8 What this means for the distributors
 
 Translating the national model into revenue expectations:
 
-- **Market growth of 3.5–5% nominal** is the ceiling for organic volume+price growth in
+- **Market growth of 3–5% nominal** is the ceiling for organic volume+price growth in
   waterworks distribution, absent share gains.
 - **Core & Main's fiscal 2026 guidance of $7.8–7.9bn on $7.647bn (2.0–3.3% growth)** sits
   *below* that, consistent with residential softness (18% of its mix) offsetting municipal strength.
 - **Above-market growth must come from share, M&A, and adjacent product lines** — treatment
   plant, metering/AMI, private label — not from the market itself.
 - **The 2029–2030 window is where the federal drag concentrates.** If a slowdown appears, it
-  should appear there, and it should be worth roughly 100–150bps of market growth, not more.
+  should appear there, and it should be worth roughly 150bps of market growth, not more.
 
 ---
 

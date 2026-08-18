@@ -42,13 +42,13 @@ $7.65bn. Internally consistent, which raises confidence in the TAM figure.
 
 ## 4.2 Sensitivity: what a change in national water spending is actually worth
 
-Using the model in [§2.5](02-forward-budget.md#25-build-up-model-national-water-capital-spending-20272035):
+Using the model in [§2.6](02-forward-budget.md#26-build-up-model-national-water-capital-spending-20272035):
 
 | Change | Core & Main | Ferguson |
 | --- | --- | --- |
 | **+100bp** to municipal market growth | +$34m revenue = **+0.44% of total net sales**; ~+$4m adj. EBITDA (**+0.4%**) | +$71m revenue = **+0.23% of group revenue** |
 | Municipal / waterworks as % of group revenue | **44%** | **~23%** |
-| Federal IIJA drag at peak (~1.0–1.5pt of market growth, 2029–30) | ~45–70bps of total revenue growth | ~25–35bps of group revenue growth |
+| Federal IIJA drag at peak (~1.25pt of market growth, 2029–30) | **~55bps** of total revenue growth | **~28bps** of group revenue growth |
 
 **The conclusion investors most often get wrong: the IIJA cliff is not a thesis-breaking
 event for either company.** Even at full effect, and even for the pure-play, it is worth
@@ -100,7 +100,7 @@ Ferguson's framing of the same demand pool (Kevin Murphy, CEO, 10 August 2026):
 
 Neither company is growing at the market rate. Both are growing *within* it by moving into
 higher-value, more technical categories — which is the same conclusion the national model
-reached in [§2.7](02-forward-budget.md#27-what-this-means-for-the-distributors).
+reached in [§2.8](02-forward-budget.md#28-what-this-means-for-the-distributors).
 
 ### Core & Main's two identified above-market lines
 
@@ -178,8 +178,8 @@ demand — and the reverse is the risk if they do not.
 
 ## 4.7 Synthesis
 
-- **The market is mid-single-digit nominal growth, replacement-led, low-cyclicality and
-  regulation-anchored.** It is not a boom, and it will not be one.
+- **The market is mid-single-digit nominal growth (3–5%), replacement-led, low-cyclicality
+  and regulation-anchored.** It is not a boom, and it will not be one.
 - **Core & Main is the higher-beta, pure-play expression.** 44% municipal, 100% water,
   50% repair-and-replace, and a stated 20% share of a $39bn TAM. It has the most leverage to
   the municipal cycle and the most exposure to residential weakness at 18% of mix. Its FY26

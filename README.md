@@ -14,6 +14,7 @@ Enterprises (FERG)**.
 | [`analysis/03-technical-drivers.md`](analysis/03-technical-drivers.md) | Why the infrastructure actually needs replacement — materials, failure mechanisms, break-rate data, and the evidence that cuts *against* the consensus |
 | [`analysis/04-company-linkage.md`](analysis/04-company-linkage.md) | Sizing CNM and FERG against the addressable market, sensitivity to the funding cliff, and what to monitor |
 | [`analysis/05-sources-and-caveats.md`](analysis/05-sources-and-caveats.md) | Every source, its known bias, and where this analysis is uncertain |
+| [`US-Water-Infrastructure-Analysis.xlsx`](US-Water-Infrastructure-Analysis.xlsx) | 14-tab workbook: every figure with its source, plus a live formula-driven forward model you can re-run on your own assumptions |
 
 ## Published report
 
@@ -26,24 +27,44 @@ The source is checked in as [`report.html`](report.html).
 1. **Federal money is a rounding error at the margin, not the base.** State and local
    governments fund 92–96% of US water infrastructure spending, and have done so
    continuously since 1956. The IIJA supplemental — which expires 30 September 2026 — was
-   large in *federal* terms (roughly a 4x increase in annual SRF capitalization) but
-   equates to roughly 8–12% of total national water capital spending.
+   large in *federal* terms (a ~4x increase in annual SRF capitalization) but equates to
+   **12.8% of the $68bn national water capital base gross, and ~9.9% net** of the share that
+   revolves back into state funds.
 2. **The "cliff" is real but lagged and partially self-refilling.** Only about a third of
    IIJA water money had reached municipalities as of mid-2026; a material share was lent,
    not granted, and revolves back into state funds. The drawdown is a 2027–2029 headwind
    of low-single-digit percentage points on national capex, not a step-change.
-3. **Rates and municipal bonds are the actual funding engine, and both are inflecting up.**
+3. **The capital base is $68bn, not the $88bn a naive reading of Census construction data
+   gives.** CBO puts water utilities capital spending at $59bn in 2023 ($114bn more in O&M);
+   escalated and cross-checked against Census, ASCE and AWWA, three independent routes
+   converge on ~$68bn for 2026. Getting this right makes the federal cliff proportionally
+   *larger* and reveals a real ~12% documented funding gap.
+4. **Rates and municipal bonds are the actual funding engine, and both are inflecting up.**
    US water and sewer bills rose 5.1% in 2025 and 24.2% cumulatively over five years,
    outpacing CPI. This is the variable that matters most for distributor revenue.
-4. **The engineering case for replacement is genuine but narrower than the advocacy
+5. **The engineering case for replacement is genuine but narrower than the advocacy
    numbers imply.** Roughly 770,000 miles of water main — a third of the network — is over
    50 years old, and cast iron fails at nearly ten times the rate of PVC. But national
    break rates *fell 20%* between 2018 and 2023, per capita demand is declining, and the
    headline "needs" figures come from surveys with documented upward bias.
-5. **Regulation, not decay, is the marginal spending driver through 2030.** Lead service
+6. **Regulation, not decay, is the marginal spending driver through 2030.** Lead service
    line replacement (9.2M lines) and PFAS treatment are calendar-dated legal obligations
    with hard deadlines. Corroding pipe is a discretionary, deferrable expense; a consent
    decree is not.
+
+## Data access limitation
+
+Direct retrieval of primary documents was attempted and re-attempted. Every external host
+tested is blocked by this environment's network egress allowlist — `cbo.gov`, `epa.gov`,
+`census.gov`, `congress.gov`, `everycrsreport.com`, `fred.stlouisfed.org`,
+`infrastructurereportcard.org`, `digitalcommons.usu.edu`, even `wikipedia.org`. The allowlist
+covers package registries, GitHub and Anthropic only. Public-sector figures therefore come via
+search results summarising those primary documents; each is attributed to the correct source,
+but **verify headline numbers against the source document before relying on them**. Company
+financials came from Quartr's primary filings and do not carry this caveat.
+
+To lift this, the environment's network policy would need widening — see
+https://code.claude.com/docs/en/claude-code-on-the-web.
 
 ## Method note
 

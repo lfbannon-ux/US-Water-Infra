@@ -15,10 +15,18 @@ series. Its findings for water:
 | Metric | Value | Notes |
 | --- | --- | --- |
 | Total public spending, all transportation + water infrastructure, 2023 | **$626bn** | ~2.3% of GDP |
-| Water utilities share of that total | **~28%** | ≈ $175bn including operations & maintenance |
+| Water utilities — total spending, 2023 | **$175bn** (~28% of the total) | Second only to highways |
+| — of which **capital** | **$59bn** | The figure that drives materials demand |
+| — of which **operations & maintenance** | **$114bn** | 65% of utility spending is running the system, not building it |
 | State + local share of water infrastructure spending | **92%** | Federal share 8% |
 | State + local share of water supply & wastewater treatment facilities specifically | **~96%** | Narrower capital-facilities definition |
+| State + local share of **all** public infrastructure spending, 2023 | **79%** ($494.2bn of $625.8bn) | |
 | Operations & maintenance as a share of all public infrastructure spending, 2023 | **56.7%** ($355bn of $625.8bn) | Rising over time; capital is the minority |
+
+**The $59bn capital line is the number that matters for a distributor**, and it is the anchor
+for the forward model in [§2.2](02-forward-budget.md#22-sizing-the-actual-capital-base--four-routes-to-the-same-number).
+Escalated to 2026 it implies a ~$67bn national water capital base — well below the ~$91bn a
+naive reading of the Census construction series suggests.
 
 Two consequences follow directly, and they govern everything else in this analysis:
 
@@ -47,10 +55,12 @@ a monthly read on water infrastructure demand. Two categories matter:
 | Total construction, sewage & waste disposal | **$54.3bn** |
 | Public construction, sewage & waste disposal | **~$53bn** |
 
-Combined, that is roughly **$85–90bn/year of water-related construction put in place**,
-of which the public sector is ~95%. Note the caveat: "sewage and waste disposal" bundles
-solid-waste facilities with sewerage, so the true wastewater figure is somewhat below the
-headline.
+Combined, that is roughly **$91bn/year of water-related construction put in place**, of which
+the public sector is ~95%. **Do not use this as the water capital base.** "Sewage and waste
+disposal" bundles solid-waste facilities — landfill, waste-to-energy — with sewerage, and the
+series includes private work. Adjusting for both brings it to ~$68bn, which is where CBO's
+capital line independently lands. The full reconciliation is in
+[§2.2](02-forward-budget.md#22-sizing-the-actual-capital-base--four-routes-to-the-same-number).
 
 For longer-run context, the US Conference of Mayors' *2025 Public Infrastructure Spending*
 report puts cumulative 2012–2024 local capital spending at **$350bn on sewer** and
