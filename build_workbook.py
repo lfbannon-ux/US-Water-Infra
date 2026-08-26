@@ -113,7 +113,7 @@ ws = sheet("Read Me", [46, 62, 46], "US Water Infrastructure — Analysis Workbo
            "Historical spending · forward budget model · technical drivers · Core & Main and Ferguson")
 r = 4
 r = section(ws, r, "What this workbook contains")
-r = note(ws, r, "A quantitative companion to the written analysis. Eighteen tabs covering who funds US water "
+r = note(ws, r, "A quantitative companion to the written analysis. Nineteen tabs covering who funds US water "
                 "infrastructure, what annual spend should look like through 2035, the engineering evidence for "
                 "replacement, where the underlying asset data actually lives, the full downloaded time series, and "
                 "how it all flows through to the two listed distributors with direct exposure.")
@@ -136,6 +136,7 @@ for t, d, f in [
     ("Annual", "Full annual history for both companies plus 74 macro series with sources", "Partly"),
     ("Quarterly", "Every reported quarter for both companies, with cross-foot checks", "Partly"),
     ("Series Links", "Direct download endpoints for every series — FRED CSV, portals, primary docs", "No"),
+    ("Evidence and Monitor", "Management quotations with independent checks, ranked monitoring list, falsification tests", "No"),
     ("Sources", "Every source with its known interest or bias", "No"),
 ]:
     r = row(ws, r, [t, d, f])
@@ -1683,7 +1684,155 @@ for nm, st, nt in [
     r = row(ws, r, [nm, st, None, None, None, None, None, nt],
             fonts=[BOLD, BOLD, BLACK, BLACK, BLACK, BLACK, BLACK, MUTED])
 
-# ============================================================ 18. SOURCES
+# ============================================================ 18. EVIDENCE AND MONITOR
+ws = sheet("Evidence and Monitor", [26, 16, 74, 13, 11], "Evidence and What to Monitor",
+           "Verbatim management commentary with deep links, the ranked monitoring list, and the tests that "
+           "would falsify this analysis.", tab="A8451C")
+r = 4
+r = section(ws, r, "Management commentary — verbatim, from the earnings calls")
+r = head(ws, r, ["Speaker", "Call", "Quotation", "Independent check", "Link"])
+QUOTES = [
+    ("Brad Cowles, President", "Core & Main, Q1 FY2026, 10 Jun 2026",
+     "\u201cOn IIJA, the remaining funding is expected to hit the state revolving funds this year. That doesn\u2019t "
+     "mean that there\u2019s any cliff to the funding or there\u2019s any end to the funding. A lot of the funding has "
+     "already hit the state revolving funds. Only about a third or less of it has hit the municipality level yet. "
+     "\u2026 A portion of that funding is in the grant form, and then the other portion is in low interest loans. A "
+     "portion of that would get repaid back into those state revolving funds and used for future sources.\u201d",
+     "Drives the drawdown phasing on the Assumptions tab. Not independently verifiable \u2014 no public dataset "
+     "tracks SRF disbursement to municipality level. Treat as management estimate.",
+     "https://web.quartr.com/companies/6132/events/614274/overview"),
+    ("Robyn Bradbury, CFO", "Core & Main, Q1 FY2026, 10 Jun 2026",
+     "\u201c95% of the funding that municipalities use for their water infrastructure is state and local, and we think "
+     "that those are really strong. We\u2019re seeing municipalities increase water rates to their customers to be "
+     "able to afford some of the upgrades. We\u2019re seeing municipal bond growth and the municipal bond issuance "
+     "that\u2019s going out there.\u201d",
+     "VERIFIES. CBO puts the state and local share at 92-96%; Bluefield measures 2025 rate growth at +5.1%. "
+     "Management and third-party data agree \u2014 raises the confidence weighting.",
+     "https://web.quartr.com/companies/6132/events/614274/overview"),
+    ("Brad Cowles, President", "Core & Main, Q1 FY2026, 10 Jun 2026",
+     "\u201cThis is just a sort of a non-discretionary investment that the municipalities they must do\u2026 We see it as "
+     "a pretty durable long-term trend that is driving good growth for us.\u201d (on treatment plant demand)",
+     "Consistent with Bluefield: 79% of forecast treatment capex is rehabilitation of existing assets, not new build.",
+     "https://web.quartr.com/companies/6132/events/614274/overview"),
+    ("Mark Witkowski, CEO", "Core & Main, Q1 FY2026, 10 Jun 2026",
+     "\u201cWe\u2019ve definitely been in a lull from an M&A standpoint\u2026 What we have seen, I\u2019d say more recently, is a "
+     "pretty notable uptick in the pipeline.\u201d",
+     "Unverifiable forward statement. Watch completed deal announcements against it.",
+     "https://web.quartr.com/companies/6132/events/614274/overview"),
+    ("Bill Brundage, CFO", "Ferguson, Q2 CY2026, 10 Aug 2026",
+     "\u201cPVC is still very much in deflation. If you look in the quarter, PVC is still down about in the double-digit "
+     "range for the quarter. As a basket, commodities were about flat in the quarter.\u201d",
+     "Checkable monthly via FRED PPI series WPU072106033 (plastics water pipe) \u2014 see the Series Links tab.",
+     "https://web.quartr.com/companies/3672/events/664852/overview"),
+    ("Bill Brundage, CFO", "Ferguson, Q2 CY2026, 10 Aug 2026",
+     "\u201cThe backlogs, the open orders continue to build, both if you look at commercial mechanical and industrial "
+     "and even waterworks, which had a bit of a lumpier quarter this quarter\u2026 those backlogs continuing to be "
+     "above what those growth rates were for the quarter.\u201d",
+     "Backlog is not disclosed as a number. Unverifiable \u2014 the reported +3% waterworks growth is the only hard "
+     "datapoint.",
+     "https://web.quartr.com/companies/3672/events/664852/overview"),
+    ("Kevin Murphy, CEO", "Ferguson, Q2 CY2026, 10 Aug 2026",
+     "\u201cWe do see good, broad-based, large capital construction project growth. Data center construction activity "
+     "continues to be the strength of that sector, but we\u2019re also seeing good growth\u2026 in areas like power "
+     "generation, in areas like chemical, food and beverage, general manufacturing, mining and minerals, obviously "
+     "water and wastewater treatment.\u201d",
+     "Consistent with the reported segment table: Commercial/Mechanical +15%, Industrial +18%, Waterworks +3%.",
+     "https://web.quartr.com/companies/3672/events/664852/overview"),
+]
+for sp, call, q, chk, url in QUOTES:
+    rr = r
+    r = row(ws, r, [sp, call, q, chk, None],
+            fonts=[BOLD, MUTED, BLACK, MUTED, BLACK])
+    ws.row_dimensions[rr].height = 78
+    c = ws.cell(row=rr, column=5, value="call")
+    c.hyperlink = url
+    c.font = LINKF
+    c.border = BOX
+r += 1
+r = note(ws, r, "Quotations are transcribed from the Quartr transcripts of the calls named. The 'independent check' "
+                "column states whether each claim can be verified against a third-party source, because a claim that "
+                "cannot be checked should carry less weight than one that can \u2014 regardless of how confidently it "
+                "was delivered.")
+r += 2
+
+r = section(ws, r, "What to monitor, ranked by signal value")
+r = head(ws, r, ["Indicator", "Frequency", "Why it matters", "Where", "Link"])
+MON = [
+    ("Water and sewer rate growth", "Monthly",
+     "95% of the funding. Ran +5.1% in 2025 and +24.2% over five years. A deceleration here matters more than "
+     "anything Congress does. THE single most important series in this analysis.",
+     "FRED CUSR0000SEHG01", "https://fred.stlouisfed.org/series/CUSR0000SEHG01"),
+    ("AWWA v. EPA (Lead and Copper Rule Improvements)", "Event",
+     "Oral argument expected Fall 2026. The largest binary swing factor \u2014 an adverse ruling on utility-controlled "
+     "line replacement removes a multi-billion dollar annual programme from the forecast.",
+     "NRDC court tracker", "https://www.nrdc.org/court-battles/american-water-works-association-et-v-epa-lead-and-copper-rule-improvements"),
+    ("WRDA 2026 \u2192 appropriations", "Annual",
+     "Authorises $14bn/4yr CWSRF and $16.5bn/5yr DWSRF. Watch whether authorisation converts to appropriation; "
+     "the FY2027 House bill proposes a 16% SRF cut.",
+     "CRS IF13177", "https://www.congress.gov/crs-product/IF13177"),
+    ("Construction put in place \u2014 water supply and sewage", "Monthly",
+     "Leads distributor revenue by roughly two to four quarters.",
+     "FRED TLWSCONS / TLSWDCONS", "https://fred.stlouisfed.org/series/TLWSCONS"),
+    ("PVC / plastics water pipe PPI", "Monthly",
+     "Determines whether reported revenue growth reflects volume or price. Currently masking municipal volume "
+     "strength at both companies.",
+     "FRED WPU072106033", "https://fred.stlouisfed.org/series/WPU072106033"),
+    ("Municipal bond issuance, water and sewer", "Continuous",
+     "The capital vehicle. Issuers deferred through the 2023-24 rate spike and have been returning.",
+     "MSRB EMMA", "https://emma.msrb.org/"),
+    ("Residential construction", "Monthly",
+     "18% of Core & Main's mix and about half of Ferguson's US mix. The actual drag on both today \u2014 and far "
+     "larger than the federal funding question.",
+     "Census new residential construction", "https://www.census.gov/construction/nrc/"),
+    ("Lead service line replacement plans", "Annual from Nov 2027",
+     "The LCRI requires publicly accessible replacement plans, updated annually. First rolling public record of "
+     "realised replacement pace.",
+     "EPA / state inventories", "https://www.epa.gov/ground-water-and-drinking-water/proposed-lead-and-copper-rule-improvements"),
+]
+for i, (ind, freq, why, where, url) in enumerate(MON, 1):
+    rr = r
+    r = row(ws, r, [f"{i}. {ind}", freq, why, where, None],
+            fonts=[BOLD, MUTED, BLACK, MUTED, BLACK])
+    ws.row_dimensions[rr].height = 46
+    c = ws.cell(row=rr, column=5, value="open")
+    c.hyperlink = url
+    c.font = LINKF
+    c.border = BOX
+r += 2
+
+r = section(ws, r, "What would falsify this analysis")
+r = head(ws, r, ["The claim", "What would break it", "Where you would see it first", "", ""])
+for claim, breaker, where in [
+    ("The capital base is ~$68bn",
+     "CBO's supplementary workbook showing water utilities capital materially away from $59bn in 2023, or a "
+     "sewerage share of the Census category far from the assumed 65%.",
+     "CBO publication 60874 workbook; Census C30 detail"),
+    ("Market grows 3-5% nominal through 2035",
+     "Rate growth falling below ~3% for two consecutive years, which would break the organic growth assumption "
+     "that does most of the work in the model.",
+     "FRED CUSR0000SEHG01, year on year"),
+    ("The IIJA cliff is worth under 100bps to either company",
+     "Municipal revenue growth at Core & Main decelerating by more than ~2 points in 2029-30 without a "
+     "residential or pricing explanation.",
+     "CNM quarterly municipal end-market commentary"),
+    ("Replacement demand is regulation-driven, not failure-driven",
+     "An adverse AWWA v. EPA ruling followed by no slowdown in municipal volumes \u2014 which would mean decay, not "
+     "mandates, was driving the spend after all.",
+     "Court ruling, then two to three quarters of CNM municipal growth"),
+    ("The network is getting more reliable, not less",
+     "A fourth USU survey showing break rates rising again from the 2023 level of 11.1 per 100 miles.",
+     "USU Buried Structures Laboratory, next survey vintage"),
+    ("Both companies out-grow the market via share and M&A",
+     "Organic growth persistently at or below the 3-5% market rate with no acceleration from treatment plant "
+     "and metering.",
+     "CNM initiative disclosure; FERG waterworks growth vs US non-resi"),
+]:
+    rr = r
+    r = row(ws, r, [claim, breaker, where, None, None],
+            fonts=[BOLD, BLACK, MUTED, BLACK, BLACK])
+    ws.row_dimensions[rr].height = 42
+
+# ============================================================ 19. SOURCES
 ws = sheet("Sources", [34, 34, 14, 58], "Sources and Known Biases",
            "Every source with the interest of the party that produced it, so the reader can discount accordingly.",
            tab="5C6E7C")
